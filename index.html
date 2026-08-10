@@ -2,6 +2,7 @@
 <html lang="ro">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>Destindere de Toamnă • Congregația Orhei-Vest</title>
@@ -12,6 +13,7 @@
     />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
+
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link
@@ -19,20 +21,19 @@
       rel="stylesheet"
     />
 
-    <link rel="stylesheet" href="assets/css/style.css" />
-    <link rel="stylesheet" href="assets/css/animations.css" />
-    <link rel="stylesheet" href="assets/css/responsive.css" />
+    <link rel="stylesheet" href="./assets/css/style.css" />
+
+    <link rel="stylesheet" href="./assets/css/animations.css" />
+
+    <link rel="stylesheet" href="./assets/css/responsive.css" />
+    <link rel="stylesheet" href="./assets/css/food.css" />
   </head>
 
   <body>
-    <!-- ========================= -->
-    <!-- Animated Background -->
-    <!-- ========================= -->
-
     <div class="leaves"></div>
 
     <!-- ========================= -->
-    <!-- Header -->
+    <!-- HEADER -->
     <!-- ========================= -->
 
     <header>
@@ -40,11 +41,25 @@
         <div class="logo">🍂 Destindere</div>
 
         <ul>
-          <li><a href="#home">Acasă</a></li>
-          <li><a href="#event">Eveniment</a></li>
-          <li><a href="#register">Participare</a></li>
-          <li><a href="#stats">Statistici</a></li>
-          <li><a href="#location">Locație</a></li>
+          <li>
+            <a href="#home">Acasă</a>
+          </li>
+
+          <li>
+            <a href="#event">Eveniment</a>
+          </li>
+
+          <li>
+            <a href="#register">Participare</a>
+          </li>
+
+          <li>
+            <a href="#stats">Statistici</a>
+          </li>
+
+          <li>
+            <a href="#location">Locație</a>
+          </li>
         </ul>
       </nav>
     </header>
@@ -59,84 +74,77 @@
 
         <h2>Congregația Orhei-Vest</h2>
 
-        <p>O zi frumoasă petrecută împreună.</p>
+        <p>
+          Iată ce bine și ce plăcut este ca frații să locuiască împreună în
+          unitate! PS. 133:1
+        </p>
 
         <a href="#register" class="btn"> Confirmă participarea </a>
       </div>
     </section>
 
-    <!-- ========================= -->
-    <!-- COUNTDOWN -->
-    <!-- ========================= -->
-
     <section class="countdown">
       <div class="container">
-        <div class="countdown-card">
-          <span id="days">00</span>
+        <h2 class="section-title">Până la destindere a mai rămas...</h2>
 
-          <small>Zile</small>
-        </div>
+        <div class="countdown-grid">
+          <div class="countdown-card">
+            <span id="days">00</span>
+            <small>Zile</small>
+          </div>
 
-        <div class="countdown-card">
-          <span id="hours">00</span>
+          <div class="countdown-card">
+            <span id="hours">00</span>
+            <small>Ore</small>
+          </div>
 
-          <small>Ore</small>
-        </div>
+          <div class="countdown-card">
+            <span id="minutes">00</span>
+            <small>Minute</small>
+          </div>
 
-        <div class="countdown-card">
-          <span id="minutes">00</span>
-
-          <small>Minute</small>
-        </div>
-
-        <div class="countdown-card">
-          <span id="seconds">00</span>
-
-          <small>Secunde</small>
+          <div class="countdown-card">
+            <span id="seconds">00</span>
+            <small>Secunde</small>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ========================= -->
-    <!-- FEATURES -->
-    <!-- ========================= -->
-
     <section class="features" id="event">
       <div class="container">
-        <div class="feature-card">
-          <div class="icon">🎶</div>
+        <h2 class="section-title">Ce vom avea?</h2>
 
-          <h3>Muzică Live</h3>
-        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="icon">🎶</div>
+            <h3>Muzică Live</h3>
+          </div>
 
-        <div class="feature-card">
-          <div class="icon">📸</div>
+          <div class="feature-card">
+            <div class="icon">📸</div>
+            <h3>Photo Experience</h3>
+          </div>
 
-          <h3>Photo Experience</h3>
-        </div>
+          <div class="feature-card">
+            <div class="icon">🎁</div>
+            <h3>Surpriză Specială</h3>
+          </div>
 
-        <div class="feature-card">
-          <div class="icon">🎁</div>
+          <div class="feature-card">
+            <div class="icon">🎯</div>
+            <h3>Activități</h3>
+          </div>
 
-          <h3>Surpriză Specială</h3>
-        </div>
+          <div class="feature-card">
+            <div class="icon">☕</div>
+            <h3>Relaxare</h3>
+          </div>
 
-        <div class="feature-card">
-          <div class="icon">🎯</div>
-
-          <h3>Activități</h3>
-        </div>
-
-        <div class="feature-card">
-          <div class="icon">☕</div>
-
-          <h3>Relaxare</h3>
-        </div>
-
-        <div class="feature-card">
-          <div class="icon">🍂</div>
-
-          <h3>Decor de Toamnă</h3>
+          <div class="feature-card">
+            <div class="icon">🍂</div>
+            <h3>Decor de Toamnă</h3>
+          </div>
         </div>
       </div>
     </section>
@@ -147,23 +155,30 @@
 
     <section class="register" id="register">
       <div class="container">
-        <h2>Confirmă participarea</h2>
+        <h2 class="section-title">Confirmă participarea</h2>
 
-        <!-- FORMULARUL A FOST ACTUALIZAT AICI CU ATRIBUTELE NAME -->
         <form id="registrationForm">
-          <!-- Aici este lista care se va completa automat din Google Sheets -->
+          <!-- NUME -->
+
           <select id="guestSelect" name="nume_complet" required>
             <option value="">Se încarcă lista...</option>
           </select>
 
+          <!-- PARTICIPARE -->
+
           <select name="participa" required>
             <option value="">Particip?</option>
+
             <option value="Da">Da</option>
+
             <option value="Nu">Nu</option>
           </select>
 
+          <!-- NUMĂR PERSOANE -->
+
           <select name="persoane" required>
             <option value="">Număr persoane</option>
+
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -176,20 +191,31 @@
             <option value="10">10</option>
           </select>
 
+          <!-- CE ADUCE -->
+
           <select name="ce_aduce">
             <option value="">Ce dorești să aduci?</option>
-            <option value="Salată">Salată</option>
+
+            <option value="Legume">Legume</option>
+
             <option value="Prăjituri">Prăjituri</option>
-            <option value="Tort">Tort</option>
+
             <option value="Fructe">Fructe</option>
+
             <option value="Suc">Suc</option>
+
             <option value="Apă">Apă</option>
+
             <option value="Carne">Carne</option>
+
             <option value="Mititei">Mititei</option>
-            <option value="Cârnați">Cârnați</option>
+
             <option value="Pâine">Pâine</option>
+
             <option value="Altceva">Altceva</option>
           </select>
+
+          <!-- OBSERVAȚII -->
 
           <textarea
             name="observatii"
@@ -197,39 +223,42 @@
             placeholder="Observații (opțional)"
           ></textarea>
 
+          <!-- TRIMITERE -->
+
           <button type="submit">Trimite</button>
         </form>
       </div>
     </section>
-    <!-- ========================= -->
-    <!-- STATISTICS -->
-    <!-- ========================= -->
 
     <section class="stats" id="stats">
       <div class="container">
-        <div class="stat-card">
-          <h3>Invitații</h3>
-          <span id="invited">0</span>
-        </div>
+        <h2 class="section-title">Cine va veni?</h2>
 
-        <div class="stat-card">
-          <h3>Participă</h3>
-          <span id="confirmed">0</span>
-        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Invitații</h3>
+            <span id="invited">0</span>
+          </div>
 
-        <div class="stat-card">
-          <h3>Nu participă</h3>
-          <span id="declined">0</span>
-        </div>
+          <div class="stat-card">
+            <h3>Participă</h3>
+            <span id="confirmed">0</span>
+          </div>
 
-        <div class="stat-card">
-          <h3>Fără răspuns</h3>
-          <span id="waiting">0</span>
-        </div>
+          <div class="stat-card">
+            <h3>Nu participă</h3>
+            <span id="declined">0</span>
+          </div>
 
-        <div class="stat-card">
-          <h3>Total persoane</h3>
-          <span id="persons">0</span>
+          <div class="stat-card">
+            <h3>Fără răspuns</h3>
+            <span id="waiting">0</span>
+          </div>
+
+          <div class="stat-card">
+            <h3>Total persoane</h3>
+            <span id="persons">0</span>
+          </div>
         </div>
       </div>
     </section>
@@ -240,21 +269,31 @@
 
     <section class="food">
       <div class="container">
-        <h2>Ce mai este necesar</h2>
+        <h2 class="section-title">Ce mai este necesar</h2>
 
         <div id="foodProgress"></div>
       </div>
     </section>
 
     <!-- ========================= -->
-    <!-- MAP -->
+    <!-- LOCATION -->
     <!-- ========================= -->
 
     <section class="location" id="location">
       <div class="container">
-        <h2>Locația evenimentului</h2>
+        <h2 class="section-title">Locația evenimentului</h2>
 
-        <div class="map">Google Maps</div>
+        <div class="map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d2701.1709303100556!2d28.83591787094658!3d47.38909770754573!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNDfCsDIzJzIwLjciTiAyOMKwNTAnMTYuMyJF!5e0!3m2!1sen!2s!4v1786368762737!5m2!1sen!2s"
+            width="100%"
+            height="460"
+            style="border: 0"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
+        </div>
       </div>
     </section>
 
@@ -266,10 +305,18 @@
       <p>© 2026 Destindere de Toamnă • Congregația Orhei-Vest</p>
     </footer>
 
-    <script src="config.js"></script>
-    <script src="assets/js/countdown.js"></script>
-    <script src="assets/js/script.js"></script>
-    <script src="assets/js/stats.js"></script>
+    <!-- ========================= -->
+    <!-- JAVASCRIPT -->
+    <!-- ========================= -->
+
+    <script src="./config.js"></script>
+
+    <script src="./assets/js/countdown.js"></script>
+
+    <script src="./assets/js/script.js"></script>
+
+    <script src="./assets/js/stats.js"></script>
+
     <script src="assets/js/google-sheet.js"></script>
   </body>
 </html>

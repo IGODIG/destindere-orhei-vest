@@ -30,53 +30,51 @@ const CONFIG = {
 
   products: [
     {
-      name: "Salată",
+      name: "Legume (ardei, roșii, castraveți)",
+      required: 3,
+      icon: "🥗",
+    },
+
+    {
+      name: "Prăjituri (checuri, fursecuri, prăjituri)",
       required: 10,
+      icon: "🍰",
     },
 
     {
-      name: "Prăjituri",
-      required: 12,
+      name: "Fructe (portocale, mere, banane)",
+      required: 5,
+      icon: "🍎",
     },
 
     {
-      name: "Tort",
-      required: 4,
+      name: "Suc (mere, struguri, portocale)",
+      required: 5,
+      icon: "🧃",
     },
 
     {
-      name: "Fructe",
+      name: "Apă (minerală, dulce)",
       required: 10,
-    },
-
-    {
-      name: "Suc",
-      required: 20,
-    },
-
-    {
-      name: "Apă",
-      required: 20,
+      icon: "💧",
     },
 
     {
       name: "Carne",
-      required: 12,
+      required: 10,
+      icon: "🥩",
     },
 
     {
       name: "Mititei",
-      required: 15,
-    },
-
-    {
-      name: "Cârnați",
       required: 10,
+      icon: "🌭",
     },
 
     {
       name: "Pâine",
-      required: 15,
+      required: 10,
+      icon: "🍞",
     },
   ],
 };

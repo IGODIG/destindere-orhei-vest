@@ -1,98 +1,152 @@
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("registrationForm");
+
   const guestSelect = document.getElementById("guestSelect");
 
-  // URL-ul este preluat din config.js
   const scriptURL = CONFIG.apiUrl;
 
   // ==========================================
-  // FUNCȚIE PENTRU AFIȘAREA STATISTICILOR
+  // FUNCȚIE STATISTICI
   // ==========================================
 
-  function setVal(id, val) {
-    const el = document.getElementById(id);
+  function setVal(id, value) {
+    const element = document.getElementById(id);
 
-    if (el) {
-      el.textContent = val;
+    if (element) {
+      element.textContent = value;
     }
   }
 
   // ==========================================
-  // 1. ÎNCĂRCARE LISTĂ INVITAȚI + STATISTICI
+  // ACTUALIZARE PRODUSE
   // ==========================================
 
-  fetch(scriptURL)
-    .then(function (response) {
-      if (!response.ok) {
-        throw new Error("HTTP error: " + response.status);
-      }
+  function updateFoodProgress(produse) {
+    if (!produse) {
+      return;
+    }
 
-      return response.json();
-    })
+    const foodItems = document.querySelectorAll(".food-item");
 
-    .then(function (data) {
-      console.log("Date primite din Google Sheets:", data);
+    foodItems.forEach(function (item) {
+      const nameElement = item.querySelector(".food-name span:last-child");
 
-      // ==========================================
-      // VERIFICARE EROARE APPS SCRIPT
-      // ==========================================
+      const numberElement = item.querySelector(
+        ".food-item-header > span:last-child",
+      );
 
-      if (data.error) {
-        console.error("Eroare de la Apps Script:", data.error);
+      const progressBar = item.querySelector(".progress-bar");
 
-        if (guestSelect) {
-          guestSelect.innerHTML = '<option value="">Eroare la citire</option>';
-        }
-
+      if (!nameElement) {
         return;
       }
 
-      // ==========================================
-      // ÎNCĂRCARE LISTĂ INVITAȚI
-      // ==========================================
+      const productName = nameElement.textContent.trim();
 
-      if (guestSelect && Array.isArray(data.nume)) {
-        guestSelect.innerHTML = '<option value="">Alege numele...</option>';
+      // Căutăm produsul fără textul dintre paranteze
+      const productKey = Object.keys(produse).find(function (key) {
+        return key === productName || productName.startsWith(key);
+      });
 
-        data.nume.forEach(function (nume) {
-          if (nume && String(nume).trim() !== "") {
-            const option = document.createElement("option");
+      const current = productKey ? Number(produse[productKey]) : 0;
 
-            option.value = nume;
-            option.textContent = nume;
+      // Găsim necesarul din CONFIG
+      const configProduct = CONFIG.products.find(function (product) {
+        return (
+          productName === product.name || productName.startsWith(product.name)
+        );
+      });
 
-            guestSelect.appendChild(option);
-          }
-        });
+      if (!configProduct) {
+        return;
       }
 
-      // ==========================================
-      // ÎNCĂRCARE STATISTICI
-      // ==========================================
+      const required = Number(configProduct.required);
 
-      if (data.stats) {
-        setVal("invited", data.stats.invited);
+      const percentage = Math.min((current / required) * 100, 100);
 
-        setVal("confirmed", data.stats.confirmed);
-
-        setVal("declined", data.stats.declined);
-
-        setVal("waiting", data.stats.waiting);
-
-        setVal("persons", data.stats.persons);
+      // Text: 3 / 10
+      if (numberElement) {
+        numberElement.textContent = current + " / " + required;
       }
-    })
 
-    .catch(function (error) {
-      console.error("Eroare la conectarea cu Google Sheets:", error);
-
-      if (guestSelect) {
-        guestSelect.innerHTML = '<option value="">Eroare la încărcare</option>';
+      // Bara
+      if (progressBar) {
+        progressBar.style.width = percentage + "%";
       }
     });
+  }
 
   // ==========================================
-  // 2. TRIMITERE FORMULAR
+  // ÎNCĂRCARE DATE
+  // ==========================================
+
+  function loadData() {
+    fetch(scriptURL)
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
+
+        return response.json();
+      })
+
+      .then(function (data) {
+        console.log("Date Google Sheets:", data);
+
+        // ==========================================
+        // INVITATI
+        // ==========================================
+
+        if (guestSelect && Array.isArray(data.nume)) {
+          guestSelect.innerHTML = '<option value="">Alege numele...</option>';
+
+          data.nume.forEach(function (nume) {
+            if (nume && String(nume).trim() !== "") {
+              const option = document.createElement("option");
+
+              option.value = nume;
+
+              option.textContent = nume;
+
+              guestSelect.appendChild(option);
+            }
+          });
+        }
+
+        // ==========================================
+        // STATISTICI
+        // ==========================================
+
+        if (data.stats) {
+          setVal("invited", data.stats.invited);
+
+          setVal("confirmed", data.stats.confirmed);
+
+          setVal("declined", data.stats.declined);
+
+          setVal("waiting", data.stats.waiting);
+
+          setVal("persons", data.stats.persons);
+        }
+
+        // ==========================================
+        // PRODUSE
+        // ==========================================
+
+        updateFoodProgress(data.produse);
+      })
+
+      .catch(function (error) {
+        console.error("Eroare Google Sheets:", error);
+      });
+  }
+
+  // Încărcăm datele
+  loadData();
+
+  // ==========================================
+  // TRIMITERE FORMULAR
   // ==========================================
 
   if (form) {
@@ -111,46 +165,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
       submitButton.disabled = true;
 
-      // ==========================================
-      // TRIMITERE DATE CĂTRE GOOGLE SHEETS
-      // ==========================================
-
       fetch(scriptURL, {
         method: "POST",
 
         body: new FormData(form),
       })
         .then(function (response) {
-          if (!response.ok) {
-            throw new Error("HTTP error: " + response.status);
-          }
-
           return response.json();
         })
 
-        .then(function (res) {
-          console.log("Răspuns Apps Script:", res);
+        .then(function (result) {
+          console.log("Răspuns:", result);
 
-          if (res.result === "success") {
+          if (result.result === "success") {
             alert("Te-ai înregistrat cu succes!");
 
             form.reset();
 
-            // Reîncarcă lista și statisticile
-            window.location.reload();
+            loadData();
           } else {
             alert(
-              "A apărut o eroare: " + (res.message || "Eroare necunoscută"),
+              "A apărut o eroare: " + (result.message || "Eroare necunoscută"),
             );
           }
         })
 
         .catch(function (error) {
-          console.error("Eroare la trimitere:", error);
+          console.error("Eroare trimitere:", error);
 
-          alert(
-            "Nu am putut trimite datele. " + "Verifică conexiunea la internet.",
-          );
+          alert("Nu am putut trimite datele.");
         })
 
         .finally(function () {

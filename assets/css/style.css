@@ -4,9 +4,9 @@
    style.css
 ========================================================== */
 
-/* ==========================
+/* ==========================================================
    RESET
-========================== */
+========================================================== */
 
 *,
 *::before,
@@ -16,62 +16,50 @@
   box-sizing: border-box;
 }
 
+/* ==========================================================
+   BASE
+========================================================== */
+
 html {
   scroll-behavior: smooth;
 }
 
 body {
   font-family: "Poppins", sans-serif;
-
   background: #f7f3ee;
-
   color: #2f2f2f;
-
   overflow-x: hidden;
-
   line-height: 1.6;
 }
-
-/* ==========================
-   VARIABLES
-========================== */
 
 :root {
   --primary: #d97706;
   --primary-dark: #b45309;
-
   --secondary: #8b4513;
-
   --gold: #fbbf24;
 
   --cream: #fff8ef;
-
   --white: #ffffff;
-
   --text: #2b2b2b;
-
   --gray: #6b7280;
 
   --border: rgba(255, 255, 255, 0.25);
-
   --glass: rgba(255, 255, 255, 0.18);
 
   --shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
 
   --radius: 22px;
-
   --transition: 0.35s ease;
 
   --max-width: 1200px;
 }
 
-/* ==========================
+/* ==========================================================
    GLOBAL
-========================== */
+========================================================== */
 
 .container {
   width: min(92%, var(--max-width));
-
   margin: auto;
 }
 
@@ -81,13 +69,11 @@ section {
 
 img {
   max-width: 100%;
-
   display: block;
 }
 
 a {
   text-decoration: none;
-
   color: inherit;
 }
 
@@ -95,15 +81,48 @@ ul {
   list-style: none;
 }
 
-/* ==========================
+/* ==========================================================
+   SECTION TITLES
+========================================================== */
+
+.section-title {
+  width: 100%;
+
+  text-align: center;
+
+  font-size: 2.4rem;
+  line-height: 1.2;
+
+  color: var(--secondary);
+
+  margin: 0 0 45px;
+
+  font-weight: 700;
+}
+
+.section-title::after {
+  content: "";
+
+  display: block;
+
+  width: 70px;
+  height: 4px;
+
+  border-radius: 10px;
+
+  margin: 16px auto 0;
+
+  background: linear-gradient(to right, var(--primary), var(--gold));
+}
+
+/* ==========================================================
    HEADER
-========================== */
+========================================================== */
 
 header {
   position: fixed;
 
   top: 0;
-
   left: 0;
 
   width: 100%;
@@ -112,7 +131,7 @@ header {
 
   backdrop-filter: blur(14px);
 
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.75);
 
   border-bottom: 1px solid rgba(255, 255, 255, 0.25);
 }
@@ -121,7 +140,6 @@ header nav {
   display: flex;
 
   justify-content: space-between;
-
   align-items: center;
 
   height: 80px;
@@ -149,7 +167,8 @@ nav a {
   position: relative;
 }
 
-nav a:hover {
+nav a:hover,
+nav a.active {
   color: var(--primary);
 }
 
@@ -159,11 +178,9 @@ nav a::after {
   position: absolute;
 
   left: 0;
-
   bottom: -6px;
 
   width: 0;
-
   height: 2px;
 
   background: var(--primary);
@@ -171,13 +188,14 @@ nav a::after {
   transition: 0.3s;
 }
 
-nav a:hover::after {
+nav a:hover::after,
+nav a.active::after {
   width: 100%;
 }
 
-/* ==========================
+/* ==========================================================
    HERO
-========================== */
+========================================================== */
 
 .hero {
   min-height: 100vh;
@@ -185,7 +203,6 @@ nav a:hover::after {
   display: flex;
 
   align-items: center;
-
   justify-content: center;
 
   text-align: center;
@@ -196,7 +213,7 @@ nav a:hover::after {
 
   background:
     linear-gradient(rgba(20, 20, 20, 0.45), rgba(20, 20, 20, 0.45)),
-    url("../images/hero.jpg") center/cover no-repeat;
+    url("../images/image.jpg") center / cover no-repeat;
 }
 
 .hero::before {
@@ -250,15 +267,14 @@ nav a:hover::after {
   margin-bottom: 45px;
 }
 
-/* ==========================
+/* ==========================================================
    BUTTON
-========================== */
+========================================================== */
 
 .btn {
   display: inline-flex;
 
   align-items: center;
-
   justify-content: center;
 
   padding: 18px 42px;
@@ -282,36 +298,6 @@ nav a:hover::after {
   box-shadow: 0 25px 45px rgba(217, 119, 6, 0.45);
 }
 
-/* ==========================
-   SECTION TITLE
-========================== */
-
-section h2 {
-  text-align: center;
-
-  font-size: 2.4rem;
-
-  color: var(--secondary);
-
-  margin-bottom: 55px;
-}
-
-section h2::after {
-  content: "";
-
-  display: block;
-
-  width: 90px;
-
-  height: 4px;
-
-  border-radius: 10px;
-
-  margin: 18px auto 0;
-
-  background: linear-gradient(to right, var(--primary), var(--gold));
-}
-
 /* ==========================================================
    COUNTDOWN
 ========================================================== */
@@ -325,6 +311,10 @@ section h2::after {
 }
 
 .countdown .container {
+  display: block;
+}
+
+.countdown-grid {
   display: grid;
 
   grid-template-columns: repeat(4, 1fr);
@@ -333,7 +323,7 @@ section h2::after {
 }
 
 .countdown-card {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
 
   backdrop-filter: blur(18px);
 
@@ -380,7 +370,15 @@ section h2::after {
    FEATURES
 ========================================================== */
 
+.features {
+  background: #f7f3ee;
+}
+
 .features .container {
+  display: block;
+}
+
+.features-grid {
   display: grid;
 
   grid-template-columns: repeat(3, 1fr);
@@ -389,7 +387,7 @@ section h2::after {
 }
 
 .feature-card {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.75);
 
   backdrop-filter: blur(15px);
 
@@ -437,12 +435,7 @@ section h2::after {
 ========================================================== */
 
 .register {
-  background: linear-gradient(
-    to bottom,
-
-    #fffaf5,
-    #f5eee6
-  );
+  background: linear-gradient(to bottom, #fffaf5, #f5eee6);
 }
 
 .register form {
@@ -538,19 +531,38 @@ section h2::after {
 }
 
 .stats .container {
+  display: block;
+}
+
+.stats-grid {
   display: grid;
 
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 150px);
 
-  gap: 25px;
+  justify-content: center;
+
+  gap: 20px;
+
+  width: 100%;
 }
 
 .stat-card {
+  width: 150px;
+  height: 150px;
+
   background: #ffffff;
 
   border-radius: var(--radius);
 
-  padding: 35px 20px;
+  padding: 20px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
 
   text-align: center;
 
@@ -560,21 +572,21 @@ section h2::after {
 }
 
 .stat-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
 }
 
 .stat-card h3 {
   color: var(--gray);
 
-  font-size: 1rem;
+  font-size: 0.9rem;
 
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 
   font-weight: 500;
 }
 
 .stat-card span {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
 
   font-weight: 700;
 
@@ -582,91 +594,35 @@ section h2::after {
 }
 
 /* ==========================================================
-   FOOD PROGRESS
-========================================================== */
-
-.food {
-  background: linear-gradient(to bottom, #fffaf5, #f8efe5);
-}
-
-#foodProgress {
-  max-width: 850px;
-
-  margin: auto;
-}
-
-.food-item {
-  margin-bottom: 28px;
-}
-
-.food-item-header {
-  display: flex;
-
-  justify-content: space-between;
-
-  align-items: center;
-
-  margin-bottom: 10px;
-
-  font-weight: 600;
-}
-
-.progress {
-  width: 100%;
-
-  height: 14px;
-
-  background: #ececec;
-
-  border-radius: 999px;
-
-  overflow: hidden;
-}
-
-.progress-bar {
-  height: 100%;
-
-  width: 0;
-
-  border-radius: 999px;
-
-  background: linear-gradient(90deg, var(--primary), var(--gold));
-
-  transition: width 0.8s ease;
-}
-
-/* ==========================================================
    LOCATION
 ========================================================== */
 
 .location {
-  background: #fff;
+  background: #ffffff;
+}
+
+.location .container {
+  display: block;
 }
 
 .map {
   width: 100%;
 
-  height: 500px;
-
-  border-radius: 30px;
-
   overflow: hidden;
 
+  border-radius: 22px;
+
   box-shadow: var(--shadow);
+}
 
-  background: #e8e8e8;
+.map iframe {
+  display: block;
 
-  display: flex;
+  width: 100%;
 
-  align-items: center;
+  height: 450px;
 
-  justify-content: center;
-
-  color: #666;
-
-  font-size: 1.2rem;
-
-  font-weight: 600;
+  border: 0;
 }
 
 /* ==========================================================
@@ -674,19 +630,15 @@ section h2::after {
 ========================================================== */
 
 footer {
-  padding: 40px 20px;
-
-  background: #5b3715;
-
-  color: white;
+  padding: 35px 20px;
 
   text-align: center;
-}
 
-footer p {
-  opacity: 0.9;
+  background: #603813;
 
-  letter-spacing: 0.5px;
+  color: #ffffff;
+
+  font-size: 0.85rem;
 }
 
 /* ==========================================================
@@ -700,15 +652,19 @@ footer p {
 .mt-1 {
   margin-top: 10px;
 }
+
 .mt-2 {
   margin-top: 20px;
 }
+
 .mt-3 {
   margin-top: 30px;
 }
+
 .mt-4 {
   margin-top: 40px;
 }
+
 .mt-5 {
   margin-top: 50px;
 }
@@ -716,15 +672,19 @@ footer p {
 .mb-1 {
   margin-bottom: 10px;
 }
+
 .mb-2 {
   margin-bottom: 20px;
 }
+
 .mb-3 {
   margin-bottom: 30px;
 }
+
 .mb-4 {
   margin-bottom: 40px;
 }
+
 .mb-5 {
   margin-bottom: 50px;
 }
