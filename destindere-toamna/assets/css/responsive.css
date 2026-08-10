@@ -1,0 +1,175 @@
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+/* ==========================
+   Laptop
+========================== */
+
+@media (max-width: 1200px) {
+  .hero h1 {
+    font-size: 3.5rem;
+  }
+
+  .stats .container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ==========================
+   Tablet
+========================== */
+
+@media (max-width: 992px) {
+  section {
+    padding: 70px 0;
+  }
+
+  nav {
+    flex-direction: column;
+    height: auto;
+    padding: 20px 0;
+  }
+
+  nav ul {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 20px;
+  }
+
+  .hero h1 {
+    font-size: 3rem;
+  }
+
+  .hero h2 {
+    font-size: 1.5rem;
+  }
+
+  .countdown .container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .features .container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats .container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .register form {
+    padding: 35px;
+  }
+}
+
+/* ==========================
+   Mobile
+========================== */
+
+@media (max-width: 768px) {
+  body {
+    font-size: 15px;
+  }
+
+  .hero {
+    min-height: 90vh;
+    padding: 120px 20px 60px;
+  }
+
+  .hero h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero h2 {
+    font-size: 1.2rem;
+  }
+
+  .hero p {
+    font-size: 1rem;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .countdown .container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .countdown-card {
+    padding: 25px 15px;
+  }
+
+  .countdown-card span {
+    font-size: 2.3rem;
+  }
+
+  .features .container {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-card {
+    padding: 35px 25px;
+  }
+
+  .stats .container {
+    grid-template-columns: 1fr;
+  }
+
+  .register form {
+    padding: 25px;
+  }
+
+  .map {
+    height: 350px;
+  }
+
+  footer {
+    font-size: 0.9rem;
+  }
+}
+
+/* ==========================
+   Small Mobile
+========================== */
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .hero h2 {
+    font-size: 1rem;
+  }
+
+  section h2 {
+    font-size: 1.8rem;
+  }
+
+  .countdown .container {
+    grid-template-columns: 1fr;
+  }
+
+  .countdown-card span {
+    font-size: 2rem;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  nav ul {
+    gap: 12px;
+    font-size: 0.9rem;
+  }
+
+  .register input,
+  .register select,
+  .register textarea,
+  .register button {
+    font-size: 0.95rem;
+  }
+}

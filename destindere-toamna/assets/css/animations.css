@@ -1,0 +1,192 @@
+/* ==========================================
+   ANIMATIONS
+========================================== */
+
+/* Gradient animat pentru Hero */
+.hero::before {
+  animation: gradientMove 12s ease-in-out infinite alternate;
+}
+
+@keyframes gradientMove {
+  0% {
+    opacity: 0.25;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0.45;
+    transform: scale(1.08);
+  }
+}
+
+/* ==========================================
+   Frunze
+========================================== */
+
+.leaves {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.leaves::before,
+.leaves::after {
+  content: "🍂";
+
+  position: absolute;
+
+  font-size: 2rem;
+
+  animation: fall 15s linear infinite;
+}
+
+.leaves::after {
+  left: 75%;
+
+  animation-duration: 18s;
+  animation-delay: 5s;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-120px) rotate(0deg);
+
+    opacity: 0;
+
+    left: 15%;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(120vh) rotate(720deg);
+
+    left: 85%;
+
+    opacity: 0;
+  }
+}
+
+/* ==========================================
+   Hover Card
+========================================== */
+
+.feature-card {
+  transition:
+    transform 0.35s,
+    box-shadow 0.35s;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px) scale(1.03);
+}
+
+/* ==========================================
+   Countdown
+========================================== */
+
+.countdown-card {
+  animation: pulse 3s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.03);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ==========================================
+   Buton Shine
+========================================== */
+
+.btn {
+  position: relative;
+
+  overflow: hidden;
+}
+
+.btn::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+
+  left: -120%;
+
+  width: 70%;
+
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+}
+
+.btn:hover::before {
+  animation: shine 0.8s;
+}
+
+@keyframes shine {
+  100% {
+    left: 150%;
+  }
+}
+
+/* ==========================================
+   Fade In
+========================================== */
+
+.fade {
+  animation: fadeUp 0.8s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================
+   Floating
+========================================== */
+
+.float {
+  animation: floating 5s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
