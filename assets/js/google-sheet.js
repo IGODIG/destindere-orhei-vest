@@ -2,82 +2,141 @@ document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("registrationForm");
   const guestSelect = document.getElementById("guestSelect");
 
-  const scriptURL =
-    "https://script.google.com/macros/s/AKfycbwuZAlb0ur5x2aJTWyP0YbWWxi4f-R--Dc3uj0Y1dbCgv9bYyANEwRfTAE-2GzanRQuqw/exec";
+  // URL-ul este preluat din config.js
+  const scriptURL = CONFIG.apiUrl;
 
-  // Funcție simplă de afișare text
+  // ==========================================
+  // FUNCȚIE PENTRU AFIȘAREA STATISTICILOR
+  // ==========================================
+
   function setVal(id, val) {
     const el = document.getElementById(id);
-    if (el) el.textContent = val;
+
+    if (el) {
+      el.textContent = val;
+    }
   }
 
   // ==========================================
-  // 1. ÎNCĂRCAREA LISTEI ȘI A STATISTICILOR
+  // 1. ÎNCĂRCARE LISTĂ INVITAȚI + STATISTICI
   // ==========================================
+
   fetch(scriptURL)
-    .then((response) => response.json())
-    .then((data) => {
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("HTTP error: " + response.status);
+      }
+
+      return response.json();
+    })
+
+    .then(function (data) {
       console.log("Date primite din Google Sheets:", data);
+
+      // ==========================================
+      // VERIFICARE EROARE APPS SCRIPT
+      // ==========================================
 
       if (data.error) {
         console.error("Eroare de la Apps Script:", data.error);
-        if (guestSelect)
+
+        if (guestSelect) {
           guestSelect.innerHTML = '<option value="">Eroare la citire</option>';
+        }
+
         return;
       }
 
-      // Încărcare Nume în Dropdown
+      // ==========================================
+      // ÎNCĂRCARE LISTĂ INVITAȚI
+      // ==========================================
+
       if (guestSelect && Array.isArray(data.nume)) {
         guestSelect.innerHTML = '<option value="">Alege numele...</option>';
-        data.nume.forEach((nume) => {
-          if (nume && nume.trim() !== "") {
+
+        data.nume.forEach(function (nume) {
+          if (nume && String(nume).trim() !== "") {
             const option = document.createElement("option");
+
             option.value = nume;
             option.textContent = nume;
+
             guestSelect.appendChild(option);
           }
         });
       }
 
-      // Încărcare Statistici pe ecran
+      // ==========================================
+      // ÎNCĂRCARE STATISTICI
+      // ==========================================
+
       if (data.stats) {
         setVal("invited", data.stats.invited);
+
         setVal("confirmed", data.stats.confirmed);
+
         setVal("declined", data.stats.declined);
+
         setVal("waiting", data.stats.waiting);
+
         setVal("persons", data.stats.persons);
       }
     })
-    .catch((error) => {
-      console.error("Eroare de conexiune/CORS:", error);
+
+    .catch(function (error) {
+      console.error("Eroare la conectarea cu Google Sheets:", error);
+
       if (guestSelect) {
-        guestSelect.innerHTML =
-          '<option value="">Eroare la încărcare internet</option>';
+        guestSelect.innerHTML = '<option value="">Eroare la încărcare</option>';
       }
     });
 
   // ==========================================
-  // 2. TRIMITEREA FORMULARULUI
+  // 2. TRIMITERE FORMULAR
   // ==========================================
+
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
 
       const submitButton = form.querySelector('button[type="submit"]');
+
+      if (!submitButton) {
+        return;
+      }
+
       const originalText = submitButton.innerText;
 
       submitButton.innerText = "Se trimite...";
+
       submitButton.disabled = true;
+
+      // ==========================================
+      // TRIMITERE DATE CĂTRE GOOGLE SHEETS
+      // ==========================================
 
       fetch(scriptURL, {
         method: "POST",
+
         body: new FormData(form),
       })
-        .then((response) => response.json())
-        .then((res) => {
+        .then(function (response) {
+          if (!response.ok) {
+            throw new Error("HTTP error: " + response.status);
+          }
+
+          return response.json();
+        })
+
+        .then(function (res) {
+          console.log("Răspuns Apps Script:", res);
+
           if (res.result === "success") {
             alert("Te-ai înregistrat cu succes!");
+
             form.reset();
+
+            // Reîncarcă lista și statisticile
             window.location.reload();
           } else {
             alert(
@@ -85,12 +144,18 @@ document.addEventListener("DOMContentLoaded", function () {
             );
           }
         })
-        .catch((error) => {
+
+        .catch(function (error) {
           console.error("Eroare la trimitere:", error);
-          alert("Nu am putut trimite datele. Verifică conexiunea la internet.");
+
+          alert(
+            "Nu am putut trimite datele. " + "Verifică conexiunea la internet.",
+          );
         })
-        .finally(() => {
+
+        .finally(function () {
           submitButton.innerText = originalText;
+
           submitButton.disabled = false;
         });
     });

@@ -4,7 +4,7 @@
 
 const CONFIG = {
   // ==========================
-  // Eveniment
+  // EVENIMENT
   // ==========================
 
   eventName: "Destindere de Toamnă",
@@ -18,13 +18,14 @@ const CONFIG = {
   invited: 128,
 
   // ==========================
-  // Google Apps Script
+  // GOOGLE APPS SCRIPT
   // ==========================
 
-  apiUrl: "",
+  apiUrl:
+    "https://script.google.com/macros/s/AKfycbwuZAlb0ur5x2aJTWyP0YbWWxi4f-R--Dc3uj0Y1dbCgv9bYyANEwRfTAE-2GzanRQuqw/exec",
 
   // ==========================
-  // Produse necesare
+  // PRODUSE NECESARE
   // ==========================
 
   products: [
