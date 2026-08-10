@@ -5,24 +5,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const scriptURL =
     "https://script.google.com/macros/s/AKfycbwuZAlb0ur5x2aJTWyP0YbWWxi4f-R--Dc3uj0Y1dbCgv9bYyANEwRfTAE-2GzanRQuqw/exec";
 
-  // Funcție pentru numărare animată
-  function animateValue(element, start, end, duration) {
-    if (!element || start === end) {
-      if (element) element.textContent = end;
-      return;
-    }
-    let range = end - start;
-    let current = start;
-    let increment = end > start ? 1 : -1;
-    let stepTime = Math.abs(Math.floor(duration / range)) || 20;
-
-    let timer = setInterval(function () {
-      current += increment;
-      element.textContent = current;
-      if (current == end) {
-        clearInterval(timer);
-      }
-    }, stepTime);
+  // Funcție simplă de afișare text
+  function setVal(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
   }
 
   // ==========================================
@@ -31,12 +17,16 @@ document.addEventListener("DOMContentLoaded", function () {
   fetch(scriptURL)
     .then((response) => response.json())
     .then((data) => {
+      console.log("Date primite din Google Sheets:", data);
+
       if (data.error) {
-        console.error("Eroare Apps Script:", data.error);
+        console.error("Eroare de la Apps Script:", data.error);
+        if (guestSelect)
+          guestSelect.innerHTML = '<option value="">Eroare la citire</option>';
         return;
       }
 
-      // Populate Dropdown
+      // Încărcare Nume în Dropdown
       if (guestSelect && Array.isArray(data.nume)) {
         guestSelect.innerHTML = '<option value="">Alege numele...</option>';
         data.nume.forEach((nume) => {
@@ -49,24 +39,17 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       }
 
-      // Populate & Animate Statistici cu Date Reale
+      // Încărcare Statistici pe ecran
       if (data.stats) {
-        const updateStat = (id, targetValue) => {
-          const el = document.getElementById(id);
-          if (el) {
-            animateValue(el, 0, parseInt(targetValue) || 0, 1000);
-          }
-        };
-
-        updateStat("invited", data.stats.invited);
-        updateStat("confirmed", data.stats.confirmed);
-        updateStat("declined", data.stats.declined);
-        updateStat("waiting", data.stats.waiting);
-        updateStat("persons", data.stats.persons);
+        setVal("invited", data.stats.invited);
+        setVal("confirmed", data.stats.confirmed);
+        setVal("declined", data.stats.declined);
+        setVal("waiting", data.stats.waiting);
+        setVal("persons", data.stats.persons);
       }
     })
     .catch((error) => {
-      console.error("Eroare încărcare date:", error);
+      console.error("Eroare de conexiune/CORS:", error);
       if (guestSelect) {
         guestSelect.innerHTML =
           '<option value="">Eroare la încărcare internet</option>';
