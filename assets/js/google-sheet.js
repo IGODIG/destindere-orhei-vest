@@ -5,35 +5,77 @@ document.addEventListener("DOMContentLoaded", function () {
   const scriptURL =
     "https://script.google.com/macros/s/AKfycbwuZAlb0ur5x2aJTWyP0YbWWxi4f-R--Dc3uj0Y1dbCgv9bYyANEwRfTAE-2GzanRQuqw/exec";
 
-  // Încărcarea listei de invitați
-  if (guestSelect) {
-    fetch(scriptURL)
-      .then((response) => response.json())
-      .then((data) => {
-        if (Array.isArray(data)) {
-          guestSelect.innerHTML = '<option value="">Alege numele...</option>';
-          data.forEach((nume) => {
-            if (nume && nume.trim() !== "") {
-              const option = document.createElement("option");
-              option.value = nume;
-              option.textContent = nume;
-              guestSelect.appendChild(option);
-            }
-          });
-        } else {
-          console.error("Răspunsul nu este o listă validă:", data);
-          guestSelect.innerHTML =
-            '<option value="">Eroare la citirea numelor</option>';
-        }
-      })
-      .catch((error) => {
-        console.error("Eroare la aducerea numelor:", error);
-        guestSelect.innerHTML =
-          '<option value="">Eroare la încărcare internet</option>';
-      });
+  // Funcție pentru numărare animată
+  function animateValue(element, start, end, duration) {
+    if (!element || start === end) {
+      if (element) element.textContent = end;
+      return;
+    }
+    let range = end - start;
+    let current = start;
+    let increment = end > start ? 1 : -1;
+    let stepTime = Math.abs(Math.floor(duration / range)) || 20;
+
+    let timer = setInterval(function () {
+      current += increment;
+      element.textContent = current;
+      if (current == end) {
+        clearInterval(timer);
+      }
+    }, stepTime);
   }
 
-  // Trimiterea formularului
+  // ==========================================
+  // 1. ÎNCĂRCAREA LISTEI ȘI A STATISTICILOR
+  // ==========================================
+  fetch(scriptURL)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.error) {
+        console.error("Eroare Apps Script:", data.error);
+        return;
+      }
+
+      // Populate Dropdown
+      if (guestSelect && Array.isArray(data.nume)) {
+        guestSelect.innerHTML = '<option value="">Alege numele...</option>';
+        data.nume.forEach((nume) => {
+          if (nume && nume.trim() !== "") {
+            const option = document.createElement("option");
+            option.value = nume;
+            option.textContent = nume;
+            guestSelect.appendChild(option);
+          }
+        });
+      }
+
+      // Populate & Animate Statistici cu Date Reale
+      if (data.stats) {
+        const updateStat = (id, targetValue) => {
+          const el = document.getElementById(id);
+          if (el) {
+            animateValue(el, 0, parseInt(targetValue) || 0, 1000);
+          }
+        };
+
+        updateStat("invited", data.stats.invited);
+        updateStat("confirmed", data.stats.confirmed);
+        updateStat("declined", data.stats.declined);
+        updateStat("waiting", data.stats.waiting);
+        updateStat("persons", data.stats.persons);
+      }
+    })
+    .catch((error) => {
+      console.error("Eroare încărcare date:", error);
+      if (guestSelect) {
+        guestSelect.innerHTML =
+          '<option value="">Eroare la încărcare internet</option>';
+      }
+    });
+
+  // ==========================================
+  // 2. TRIMITEREA FORMULARULUI
+  // ==========================================
   if (form) {
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -44,15 +86,19 @@ document.addEventListener("DOMContentLoaded", function () {
       submitButton.innerText = "Se trimite...";
       submitButton.disabled = true;
 
-      fetch(scriptURL, { method: "POST", body: new FormData(form) })
+      fetch(scriptURL, {
+        method: "POST",
+        body: new FormData(form),
+      })
         .then((response) => response.json())
-        .then((data) => {
-          if (data.result === "success") {
+        .then((res) => {
+          if (res.result === "success") {
             alert("Te-ai înregistrat cu succes!");
             form.reset();
+            window.location.reload();
           } else {
             alert(
-              "A apărut o eroare: " + (data.message || "Eroare necunoscută"),
+              "A apărut o eroare: " + (res.message || "Eroare necunoscută"),
             );
           }
         })
