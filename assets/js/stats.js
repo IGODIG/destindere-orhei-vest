@@ -1,27 +1,32 @@
 /* ==========================================
-   STATS.JS
+   STATS.JS - Adaptat pentru Google Sheets
 ========================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
   /* ==========================
-       Counter Animation
-    ========================== */
-  document.getElementById("invited").dataset.target = CONFIG.invited;
+     Counter Animation
+  ========================== */
   const counters = document.querySelectorAll(".stat-card span");
 
   const animateCounter = (element) => {
-    const target = parseInt(element.dataset.target);
+    // Citește valoarea pusă de google-sheet.js sau din HTML
+    const target = parseInt(
+      element.dataset.target || element.textContent || "0",
+    );
 
     let current = 0;
-
     const increment = Math.max(1, Math.ceil(target / 60));
+
+    if (target === 0) {
+      element.textContent = "0";
+      return;
+    }
 
     const timer = setInterval(() => {
       current += increment;
 
       if (current >= target) {
         current = target;
-
         clearInterval(timer);
       }
 
@@ -35,7 +40,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!entry.isIntersecting) return;
 
         animateCounter(entry.target);
-
         observer.unobserve(entry.target);
       });
     },
@@ -49,43 +53,33 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /* ==========================
-       Food Progress
-    ========================== */
-
-  const products = CONFIG.products.map((product) => ({
-    name: product.name,
-    current: 0,
-    total: product.required,
-  }));
-
+     Food Progress (dacă există CONFIG)
+  ========================== */
   const container = document.getElementById("foodProgress");
 
-  products.forEach((item) => {
-    const percent = Math.round((item.current / item.total) * 100);
+  if (container && typeof CONFIG !== "undefined" && CONFIG.products) {
+    const products = CONFIG.products.map((product) => ({
+      name: product.name,
+      current: 0,
+      total: product.required,
+    }));
 
-    container.innerHTML += `
+    container.innerHTML = ""; // Curățăm containerul înainte de populare
 
-            <div class="food-item">
+    products.forEach((item) => {
+      const percent = Math.round((item.current / item.total) * 100);
 
-                <div class="food-item-header">
-
-                    <span>${item.name}</span>
-
-                    <span>${item.current} / ${item.total}</span>
-
-                </div>
-
-                <div class="progress">
-
-                    <div
-                        class="progress-bar"
-                        style="width:${percent}%">
-                    </div>
-
-                </div>
-
-            </div>
-
-        `;
-  });
+      container.innerHTML += `
+        <div class="food-item">
+          <div class="food-item-header">
+            <span>${item.name}</span>
+            <span>${item.current} / ${item.total}</span>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" style="width:${percent}%"></div>
+          </div>
+        </div>
+      `;
+    });
+  }
 });
