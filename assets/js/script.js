@@ -11,9 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     link.addEventListener("click", function (e) {
       const target = document.querySelector(this.getAttribute("href"));
 
-      if (!target) {
-        return;
-      }
+      if (!target) return;
 
       e.preventDefault();
 
@@ -36,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sections.forEach(function (section) {
       const sectionTop = section.offsetTop - 120;
+
       const sectionHeight = section.offsetHeight;
 
       if (
@@ -56,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   /* ==========================================================
-     FOOD
+     FOOD PROGRESS
   ========================================================== */
 
   const foodProgress = document.getElementById("foodProgress");
@@ -68,54 +67,202 @@ document.addEventListener("DOMContentLoaded", function () {
   ) {
     foodProgress.innerHTML = "";
 
-    CONFIG.products.forEach(function (product) {
-      const item = document.createElement("div");
+    fetch(CONFIG.apiUrl)
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Google Apps Script HTTP error: " + response.status);
+        }
 
-      item.className = "food-card";
+        return response.json();
+      })
 
-      item.innerHTML = `
+      .then(function (data) {
+        console.log("Date Google Sheets:", data);
 
-        <div class="food-card-icon">
-          ${product.icon || "🍂"}
-        </div>
+        const produseAlese = data.produse || {};
 
-        <div class="food-card-content">
+        console.log("Produse:", produseAlese);
 
-          <h3>
-            ${product.name}
-          </h3>
+        CONFIG.products.forEach(function (product) {
+          const item = document.createElement("div");
 
-          <p>
-            Necesar pentru eveniment
-          </p>
+          item.className = "food-card";
 
-          <div class="food-card-bottom">
+          /* ==========================
+               CURRENT
+            ========================== */
 
-            <span>
-              Progres
-            </span>
+          const current = Number(produseAlese[product.name]) || 0;
 
-            <strong>
-              0 / ${product.required}
-            </strong>
+          /* ==========================
+               REQUIRED
+            ========================== */
 
-          </div>
+          const required = Number(product.required) || 0;
 
-          <div class="food-progress">
+          /* ==========================
+               PROGRESS
+            ========================== */
 
-            <div
-              class="food-progress-bar"
-              style="width: 0%">
-            </div>
+          let progress = 0;
 
-          </div>
+          if (required > 0) {
+            progress = (current / required) * 100;
+          }
 
-        </div>
+          progress = Math.max(0, Math.min(progress, 100));
 
-      `;
+          progress = Math.round(progress);
 
-      foodProgress.appendChild(item);
-    });
+          console.log(
+            product.name,
+            "=>",
+            current,
+            "/",
+            required,
+            "=",
+            progress + "%",
+          );
+
+          /* ==========================
+               COMPLETED
+            ========================== */
+
+          const completed = current >= required && required > 0;
+
+          /* ==========================
+               HTML
+            ========================== */
+
+          item.innerHTML = `
+
+              <div class="food-card-icon">
+                ${product.icon || "🍂"}
+              </div>
+
+
+              <div class="food-card-content">
+
+                <h3>
+                  ${product.name}
+                </h3>
+
+
+                <p>
+                  ${completed ? "Necesar complet" : "Necesar pentru eveniment"}
+                </p>
+
+
+                <div class="food-card-bottom">
+
+                  <span>
+                    ${completed ? "COMPLET" : "PROGRES"}
+                  </span>
+
+
+                 <strong>
+                 ${current} / ${required} ${product.unit || ""}
+                 </strong>
+                 </div>
+
+
+                <div class="food-progress">
+
+                  <div
+                    class="food-progress-bar"
+                    style="width: ${progress}%"
+                    aria-valuenow="${progress}"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  ></div>
+
+                </div>
+
+              </div>
+
+            `;
+
+          foodProgress.appendChild(item);
+        });
+
+        /* ======================================================
+           ANIMATION BARE
+        ====================================================== */
+
+        requestAnimationFrame(function () {
+          const bars = foodProgress.querySelectorAll(".food-progress-bar");
+
+          bars.forEach(function (bar) {
+            const width = bar.style.width;
+
+            bar.style.width = "0%";
+
+            requestAnimationFrame(function () {
+              bar.style.width = width;
+            });
+          });
+        });
+      })
+
+      .catch(function (error) {
+        console.error("Eroare FOOD:", error);
+
+        /* ==========================
+           FALLBACK
+        ========================== */
+
+        CONFIG.products.forEach(function (product) {
+          const item = document.createElement("div");
+
+          item.className = "food-card";
+
+          item.innerHTML = `
+
+              <div class="food-card-icon">
+                ${product.icon || "🍂"}
+              </div>
+
+
+              <div class="food-card-content">
+
+                <h3>
+                  ${product.name}
+                </h3>
+
+
+                <p>
+                  Necesar pentru eveniment
+                </p>
+
+
+                <div class="food-card-bottom">
+
+                  <span>
+                    PROGRES
+                  </span>
+                  <strong>
+                  0 / ${product.required} ${product.unit || ""}
+                  </strong>
+
+                </div>
+
+
+                <div class="food-progress">
+
+                  <div
+                    class="food-progress-bar"
+                    style="width: 0%"
+                  ></div>
+
+                </div>
+
+              </div>
+
+            `;
+
+          foodProgress.appendChild(item);
+        });
+      });
   }
 
   /* ==========================================================
@@ -133,11 +280,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const observer = new IntersectionObserver(
     function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("fade");
-
-          observer.unobserve(entry.target);
+        if (!entry.isIntersecting) {
+          return;
         }
+
+        entry.target.classList.add("fade");
+
+        observer.unobserve(entry.target);
       });
     },
     {

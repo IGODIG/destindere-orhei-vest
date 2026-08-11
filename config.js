@@ -27,53 +27,53 @@ const CONFIG = {
   // ==========================
   // PRODUSE NECESARE
   // ==========================
-
   products: [
     {
-      name: "Legume (ardei, roșii, castraveți)",
+      name: "Legume",
       required: 3,
+      unit: "kg",
       icon: "🥗",
     },
-
     {
-      name: "Prăjituri (checuri, fursecuri, prăjituri)",
+      name: "Prăjituri",
       required: 10,
+      unit: "kg",
       icon: "🍰",
     },
-
     {
-      name: "Fructe (portocale, mere, banane)",
+      name: "Fructe",
       required: 5,
+      unit: "kg",
       icon: "🍎",
     },
-
     {
-      name: "Suc (mere, struguri, portocale)",
+      name: "Suc",
       required: 5,
+      unit: "L",
       icon: "🧃",
     },
-
     {
-      name: "Apă (minerală, dulce)",
+      name: "Apă",
       required: 10,
+      unit: "L",
       icon: "💧",
     },
-
     {
       name: "Carne",
       required: 10,
+      unit: "kg",
       icon: "🥩",
     },
-
     {
       name: "Mititei",
       required: 10,
+      unit: "kg",
       icon: "🌭",
     },
-
     {
       name: "Pâine",
       required: 10,
+      unit: "buc.",
       icon: "🍞",
     },
   ],

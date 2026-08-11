@@ -2,39 +2,44 @@
    RESPONSIVE
 ========================================================== */
 
-/* ==========================
-   Laptop
-========================== */
+/* ==========================================================
+   LAPTOP
+========================================================== */
 
 @media (max-width: 1200px) {
   .hero h1 {
     font-size: 3.5rem;
   }
 
-  .stats .container {
-    grid-template-columns: repeat(3, 1fr);
+  .stats-grid {
+    grid-template-columns: repeat(3, 150px);
   }
 }
 
-/* ==========================
-   Tablet
-========================== */
+/* ==========================================================
+   TABLET
+========================================================== */
 
 @media (max-width: 992px) {
   section {
     padding: 70px 0;
   }
 
-  nav {
+  header nav {
     flex-direction: column;
+
     height: auto;
+
     padding: 20px 0;
   }
 
   nav ul {
     flex-wrap: wrap;
+
     justify-content: center;
+
     gap: 18px;
+
     margin-top: 20px;
   }
 
@@ -46,26 +51,34 @@
     font-size: 1.5rem;
   }
 
-  .countdown .container {
+  .countdown-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .features .container {
+  .features-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .stats .container {
-    grid-template-columns: repeat(2, 1fr);
+  .stats-grid {
+    grid-template-columns: repeat(3, 150px);
+
+    justify-content: center;
   }
 
   .register form {
     padding: 35px;
   }
+
+  /* FOOD */
+
+  #foodProgress {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-/* ==========================
-   Mobile
-========================== */
+/* ==========================================================
+   MOBILE
+========================================================== */
 
 @media (max-width: 768px) {
   body {
@@ -74,6 +87,7 @@
 
   .hero {
     min-height: 90vh;
+
     padding: 120px 20px 60px;
   }
 
@@ -91,11 +105,15 @@
 
   .btn {
     width: 100%;
+
     max-width: 320px;
   }
 
-  .countdown .container {
+  /* COUNTDOWN */
+
+  .countdown-grid {
     grid-template-columns: repeat(2, 1fr);
+
     gap: 15px;
   }
 
@@ -107,7 +125,9 @@
     font-size: 2.3rem;
   }
 
-  .features .container {
+  /* FEATURES */
+
+  .features-grid {
     grid-template-columns: 1fr;
   }
 
@@ -115,15 +135,33 @@
     padding: 35px 25px;
   }
 
-  .stats .container {
-    grid-template-columns: 1fr;
+  /* STATS */
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 150px);
+
+    justify-content: center;
+
+    gap: 15px;
   }
+
+  /* REGISTER */
 
   .register form {
     padding: 25px;
   }
 
-  .map {
+  /* FOOD */
+
+  #foodProgress {
+    grid-template-columns: 1fr;
+
+    max-width: 650px;
+  }
+
+  /* MAP */
+
+  .map iframe {
     height: 350px;
   }
 
@@ -132,9 +170,9 @@
   }
 }
 
-/* ==========================
-   Small Mobile
-========================== */
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
 
 @media (max-width: 480px) {
   .hero h1 {
@@ -149,7 +187,9 @@
     font-size: 1.8rem;
   }
 
-  .countdown .container {
+  /* COUNTDOWN */
+
+  .countdown-grid {
     grid-template-columns: 1fr;
   }
 
@@ -157,19 +197,73 @@
     font-size: 2rem;
   }
 
+  /* HEADER */
+
   .logo {
     font-size: 1.1rem;
   }
 
   nav ul {
     gap: 12px;
+
     font-size: 0.9rem;
   }
+
+  /* REGISTER */
 
   .register input,
   .register select,
   .register textarea,
   .register button {
     font-size: 0.95rem;
+  }
+
+  /* STATS */
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 140px);
+
+    gap: 12px;
+  }
+
+  .stat-card {
+    width: 140px;
+
+    height: 140px;
+  }
+
+  /* FOOD */
+
+  #foodProgress {
+    grid-template-columns: 1fr;
+
+    gap: 16px;
+  }
+
+  #foodProgress .food-card {
+    grid-template-columns: 58px 1fr;
+
+    min-height: 160px;
+
+    padding: 18px;
+
+    gap: 14px;
+  }
+
+  #foodProgress .food-card-icon {
+    width: 58px;
+    height: 58px;
+
+    min-width: 58px;
+
+    font-size: 28px;
+  }
+
+  #foodProgress .food-card-content h3 {
+    font-size: 0.9rem;
+  }
+
+  #foodProgress .food-progress {
+    height: 10px;
   }
 }
