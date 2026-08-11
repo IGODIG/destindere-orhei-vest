@@ -89,6 +89,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         formData.append("fileName", file.name);
 
+        formData.append(
+          "fileCategory",
+          file.type.startsWith("video/") ? "video" : "photo",
+        );
+
         formData.append("mimeType", file.type || "application/octet-stream");
 
         formData.append("fileData", base64);
