@@ -30,19 +30,19 @@ const CONFIG = {
   products: [
     {
       name: "Legume",
-      required: 3,
+      required: 10,
       unit: "kg",
       icon: "🥗",
     },
     {
       name: "Prăjituri",
-      required: 10,
+      required: 5,
       unit: "kg",
       icon: "🍰",
     },
     {
       name: "Fructe",
-      required: 5,
+      required: 10,
       unit: "kg",
       icon: "🍎",
     },
@@ -54,7 +54,7 @@ const CONFIG = {
     },
     {
       name: "Apă",
-      required: 10,
+      required: 50,
       unit: "L",
       icon: "💧",
     },
@@ -66,14 +66,14 @@ const CONFIG = {
     },
     {
       name: "Mititei",
-      required: 10,
+      required: 5,
       unit: "kg",
       icon: "🌭",
     },
     {
       name: "Pâine",
       required: 10,
-      unit: "buc.",
+      unit: "franzele feliate",
       icon: "🍞",
     },
   ],

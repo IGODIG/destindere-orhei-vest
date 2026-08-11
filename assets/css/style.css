@@ -303,7 +303,8 @@ nav a.active::after {
 ========================================================== */
 
 .countdown {
-  margin-top: -70px;
+  margin-top: 10px;
+  margin-bottom: -10px;
 
   position: relative;
 
@@ -312,6 +313,7 @@ nav a.active::after {
 
 .countdown .container {
   display: block;
+  margin-bottom: -50px;
 }
 
 .countdown-grid {
