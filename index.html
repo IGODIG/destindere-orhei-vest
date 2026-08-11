@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="./assets/css/responsive.css" />
     <link rel="stylesheet" href="./assets/css/food.css" />
     <link rel="stylesheet" href="./assets/css/gallery.css" />
+    <link rel="stylesheet" href="./assets/css/memories.css" />
   </head>
 
   <body>
@@ -339,6 +340,53 @@
     </section>
 
     <!-- ========================= -->
+    <!-- AMINTIRI -->
+    <!-- ========================= -->
+
+    <section class="memories" id="memories">
+      <div class="container">
+        <h2 class="section-title">Amintiri de la destindere</h2>
+
+        <p class="memories-text">
+          Ai făcut o fotografie sau un videoclip? Împărtășește-l cu ceilalți.
+        </p>
+
+        <div class="upload-card">
+          <div class="upload-icon">📸</div>
+
+          <h3>Încarcă fotografii și videoclipuri</h3>
+
+          <p>Poți selecta mai multe fișiere de pe telefon sau calculator.</p>
+
+          <label for="memoryFiles" class="upload-button">
+            📁 Selectează fișiere
+          </label>
+
+          <input
+            type="file"
+            id="memoryFiles"
+            accept="image/*,video/*"
+            multiple
+            hidden
+          />
+
+          <div id="selectedFiles"></div>
+
+          <button
+            type="button"
+            id="uploadMemories"
+            class="btn upload-submit"
+            disabled
+          >
+            Încarcă
+          </button>
+
+          <div id="uploadStatus"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
     <!-- FOOTER -->
     <!-- ========================= -->
 
@@ -359,5 +407,7 @@
     <script src="./assets/js/stats.js"></script>
 
     <script src="assets/js/google-sheet.js"></script>
+
+    <script src="./assets/js/upload.js"></script>
   </body>
 </html>
