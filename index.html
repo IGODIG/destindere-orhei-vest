@@ -354,9 +354,10 @@
         <div class="upload-card">
           <div class="upload-icon">📸</div>
 
-          <h3>Încarcă fotografii și videoclipuri</h3>
+          <h3>Încarcă cele mai frumoase fotografii și videoclipuri</h3>
 
           <p>Poți selecta mai multe fișiere de pe telefon sau calculator.</p>
+          <p>Fotografii pînă la 10 MB și videoclipuri pînă la 50 MB.</p>
 
           <label for="memoryFiles" class="upload-button">
             📁 Selectează fișiere
@@ -382,6 +383,11 @@
           </button>
 
           <div id="uploadStatus"></div>
+          <div id="uploadProgressContainer" style="display: none">
+            <div id="uploadProgressBar"></div>
+          </div>
+
+          <div id="uploadProgressText"></div>
         </div>
       </div>
     </section>
