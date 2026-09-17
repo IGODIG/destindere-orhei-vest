@@ -47,6 +47,12 @@ const CONFIG = {
       icon: "🍰",
     },
     {
+      name: "Plăcinte",
+      required: 10,
+      unit: "kg",
+      icon: "🥧",
+    },
+    {
       name: "Suc",
       required: 15,
       unit: "L",
