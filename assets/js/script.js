@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sections.forEach(function (section) {
       const sectionTop = section.offsetTop - 120;
-
       const sectionHeight = section.offsetHeight;
 
       if (
@@ -81,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const produseAlese = data.produse || {};
 
-        console.log("Produse:", produseAlese);
+        console.log("Produse primite:", produseAlese);
 
         CONFIG.products.forEach(function (product) {
           const item = document.createElement("div");
@@ -89,20 +88,26 @@ document.addEventListener("DOMContentLoaded", function () {
           item.className = "food-card";
 
           /* ==========================
-               CURRENT
-            ========================== */
+             CURRENT
+          ========================== */
 
-          const current = Number(produseAlese[product.name]) || 0;
+          const valoareProdus = produseAlese[product.name];
+
+          // Verifica dacă valoarea este obiect cu proprietatea .adus sau număr direct
+          const current =
+            typeof valoareProdus === "object" && valoareProdus !== null
+              ? Number(valoareProdus.adus) || 0
+              : Number(valoareProdus) || 0;
 
           /* ==========================
-               REQUIRED
-            ========================== */
+             REQUIRED
+          ========================== */
 
           const required = Number(product.required) || 0;
 
           /* ==========================
-               PROGRESS
-            ========================== */
+             PROGRESS
+          ========================== */
 
           let progress = 0;
 
@@ -111,7 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           progress = Math.max(0, Math.min(progress, 100));
-
           progress = Math.round(progress);
 
           console.log(
@@ -125,49 +129,40 @@ document.addEventListener("DOMContentLoaded", function () {
           );
 
           /* ==========================
-               COMPLETED
-            ========================== */
+             COMPLETED
+          ========================== */
 
           const completed = current >= required && required > 0;
 
           /* ==========================
-               HTML
-            ========================== */
+             HTML
+          ========================== */
 
           item.innerHTML = `
-
               <div class="food-card-icon">
                 ${product.icon || "🍂"}
               </div>
 
-
               <div class="food-card-content">
-
                 <h3>
                   ${product.name}
                 </h3>
-
 
                 <p>
                   ${completed ? "Necesar complet" : "Necesar pentru destindere"}
                 </p>
 
-
                 <div class="food-card-bottom">
-
                   <span>
                     ${completed ? "COMPLET" : "PROGRES"}
                   </span>
 
-
-                 <strong>
-                 ${current} / ${required} ${product.unit || ""}
-                 </strong>
-                 </div>
-
+                  <strong>
+                    ${current} / ${required} ${product.unit || ""}
+                  </strong>
+                </div>
 
                 <div class="food-progress">
-
                   <div
                     class="food-progress-bar"
                     style="width: ${progress}%"
@@ -175,11 +170,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     aria-valuemin="0"
                     aria-valuemax="100"
                   ></div>
-
                 </div>
-
               </div>
-
             `;
 
           foodProgress.appendChild(item);
@@ -217,47 +209,35 @@ document.addEventListener("DOMContentLoaded", function () {
           item.className = "food-card";
 
           item.innerHTML = `
-
               <div class="food-card-icon">
                 ${product.icon || "🍂"}
               </div>
 
-
               <div class="food-card-content">
-
                 <h3>
                   ${product.name}
                 </h3>
-
 
                 <p>
                   Necesar pentru eveniment
                 </p>
 
-
                 <div class="food-card-bottom">
-
                   <span>
                     PROGRES
                   </span>
                   <strong>
-                  0 / ${product.required} ${product.unit || ""}
+                    0 / ${product.required} ${product.unit || ""}
                   </strong>
-
                 </div>
 
-
                 <div class="food-progress">
-
                   <div
                     class="food-progress-bar"
                     style="width: 0%"
                   ></div>
-
                 </div>
-
               </div>
-
             `;
 
           foodProgress.appendChild(item);
@@ -305,7 +285,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const button = document.createElement("button");
 
   button.innerHTML = "↑";
-
   button.id = "backToTop";
 
   document.body.appendChild(button);
