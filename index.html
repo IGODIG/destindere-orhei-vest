@@ -233,34 +233,55 @@
 
           <!-- CE ADUCE -->
 
-          <select name="ce_aduce">
-            <option value="">Ce dorești să aduci?</option>
+          <div class="product-row">
+            <select name="ce_aduce_1">
+              <option value="">Ce dorești să aduci?</option>
 
-            <option value="Legume">Legume</option>
+              <option value="Legume">Legume</option>
+              <option value="Fructe">Fructe</option>
+              <option value="Plăcinte">Plăcinte</option>
+              <option value="Snack-uri">Snack-uri</option>
+              <option value="Prăjituri">Prăjituri</option>
+              <option value="Suc">Suc</option>
+              <option value="Apă minerală">Apă minerală</option>
+              <option value="Apă dulce">Apă dulce</option>
+              <option value="Pâine">Pâine</option>
+              <option value="Altceva">Altceva</option>
+            </select>
 
-            <option value="Fructe">Fructe</option>
+            <input
+              type="number"
+              name="cantitate_1"
+              min="0.1"
+              step="0.1"
+              placeholder="Cantitate"
+            />
+          </div>
 
-            <option value="Plăcinte">Plăcinte</option>
+          <div class="product-row">
+            <select name="ce_aduce_2">
+              <option value="">Ce dorești să mai aduci?</option>
 
-            <option value="Snack-uri">Snack-uri</option>
+              <option value="Legume">Legume</option>
+              <option value="Fructe">Fructe</option>
+              <option value="Plăcinte">Plăcinte</option>
+              <option value="Snack-uri">Snack-uri</option>
+              <option value="Prăjituri">Prăjituri</option>
+              <option value="Suc">Suc</option>
+              <option value="Apă minerală">Apă minerală</option>
+              <option value="Apă dulce">Apă dulce</option>
+              <option value="Pâine">Pâine</option>
+              <option value="Altceva">Altceva</option>
+            </select>
 
-            <option value="Prăjituri">Prăjituri</option>
-
-            <option value="Suc">Suc</option>
-
-            <option value="Apă">Apă</option>
-
-            <option value="Pâine">Pâine</option>
-
-            <option value="Altceva">Altceva</option>
-          </select>
-          <input
-            type="number"
-            name="cantitate"
-            min="0.1"
-            step="0.1"
-            placeholder="Cantitate (kg / L / buc.)"
-          />
+            <input
+              type="number"
+              name="cantitate_2"
+              min="0.1"
+              step="0.1"
+              placeholder="Cantitate"
+            />
+          </div>
 
           <!-- OBSERVAȚII -->
 
