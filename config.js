@@ -11,7 +11,7 @@ const CONFIG = {
 
   congregation: "Congregația Orhei-Vest",
 
-  eventDate: "2026-09-20 T13:00:00",
+  eventDate: "2026-09-20T13:00:00",
 
   location: "Poiana OV",
 
