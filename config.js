@@ -54,9 +54,9 @@ const CONFIG = {
     },
     {
       name: "Snack-uri",
-      required: 10,
-      unit: "bucăți",
-      icon: "🥨",
+      required: 15,
+      unit: "pachete",
+      icon: "🍟",
     },
     {
       name: "Suc",
@@ -85,9 +85,8 @@ const CONFIG = {
     {
       name: "Altceva",
       required: 5,
-      unit: "",
+      unit: "🥜 Alune , 🌻 Semințe",
       icon: "🎁",
-      suggestions: ["🥜 Alune", "🌰 Nuci", "🌻 Semințe"],
     },
   ],
 };
