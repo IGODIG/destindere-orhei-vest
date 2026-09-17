@@ -11,11 +11,11 @@ const CONFIG = {
 
   congregation: "Congregația Orhei-Vest",
 
-  eventDate: "2026-10-04T10:00:00",
+  eventDate: "2026-09-20 T13:00:00",
 
-  location: "Pensiunea ........",
+  location: "Poiana OV",
 
-  invited: 128,
+  invited: 130,
 
   // ==========================
   // GOOGLE APPS SCRIPT
@@ -35,40 +35,28 @@ const CONFIG = {
       icon: "🥗",
     },
     {
-      name: "Prăjituri",
-      required: 5,
-      unit: "kg",
-      icon: "🍰",
-    },
-    {
       name: "Fructe",
       required: 10,
       unit: "kg",
       icon: "🍎",
     },
     {
-      name: "Suc",
+      name: "Prăjituri",
       required: 5,
+      unit: "kg",
+      icon: "🍰",
+    },
+    {
+      name: "Suc",
+      required: 15,
       unit: "L",
       icon: "🧃",
     },
     {
       name: "Apă",
-      required: 50,
+      required: 30,
       unit: "L",
       icon: "💧",
-    },
-    {
-      name: "Carne",
-      required: 10,
-      unit: "kg",
-      icon: "🥩",
-    },
-    {
-      name: "Mititei",
-      required: 5,
-      unit: "kg",
-      icon: "🌭",
     },
     {
       name: "Pâine",
