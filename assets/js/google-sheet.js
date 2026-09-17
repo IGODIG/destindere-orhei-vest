@@ -43,14 +43,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const productName = nameElement.textContent.trim();
 
-      // Căutăm produsul fără textul dintre paranteze
+      // ==========================================
+      // GĂSEȘTE PRODUSUL
+      // ==========================================
+
       const productKey = Object.keys(produse).find(function (key) {
         return key === productName || productName.startsWith(key);
       });
 
+      // Cantitatea totală din Google Sheets
       const current = productKey ? Number(produse[productKey]) : 0;
 
-      // Găsim necesarul din CONFIG
+      // ==========================================
+      // GĂSEȘTE NECESARUL DIN CONFIG
+      // ==========================================
+
       const configProduct = CONFIG.products.find(function (product) {
         return (
           productName === product.name || productName.startsWith(product.name)
@@ -63,14 +70,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const required = Number(configProduct.required);
 
-      const percentage = Math.min((current / required) * 100, 100);
+      // ==========================================
+      // PROCENTAJ
+      // ==========================================
 
-      // Text: 3 / 10
+      const percentage =
+        required > 0 ? Math.min((current / required) * 100, 100) : 0;
+
+      // ==========================================
+      // TEXT
+      // Exemplu:
+      // 4 / 15
+      // ==========================================
+
       if (numberElement) {
         numberElement.textContent = current + " / " + required;
       }
 
-      // Bara
+      // ==========================================
+      // BARA DE PROGRES
+      // ==========================================
+
       if (progressBar) {
         progressBar.style.width = percentage + "%";
       }
@@ -95,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Date Google Sheets:", data);
 
         // ==========================================
-        // INVITATI
+        // INVITAȚI
         // ==========================================
 
         if (guestSelect && Array.isArray(data.nume)) {
@@ -165,19 +185,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
       submitButton.disabled = true;
 
+      // ==========================================
+      // DATE FORMULAR
+      // ==========================================
+
+      const formData = new FormData(form);
+
+      // ==========================================
+      // GOOGLE APPS SCRIPT
+      // ==========================================
+
       fetch(scriptURL, {
         method: "POST",
-
-        body: new FormData(form),
+        body: formData,
       })
         .then(function (response) {
           return response.json();
         })
 
         .then(function (result) {
-          console.log("Răspuns:", result);
+          console.log("Răspuns Google Apps Script:", result);
 
-          if (result.result === "success") {
+          // ==========================================
+          // IMPORTANT:
+          // doPost() returnează success: true
+          // NU result: "success"
+          // ==========================================
+
+          if (result.success === true) {
             alert("Te-ai înregistrat cu succes!");
 
             form.reset();
@@ -185,7 +220,8 @@ document.addEventListener("DOMContentLoaded", function () {
             loadData();
           } else {
             alert(
-              "A apărut o eroare: " + (result.message || "Eroare necunoscută"),
+              "A apărut o eroare: " +
+                (result.error || result.message || "Eroare necunoscută"),
             );
           }
         })

@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 <p>
-                  ${completed ? "Necesar complet" : "Necesar pentru eveniment"}
+                  ${completed ? "Necesar complet" : "Necesar pentru destindere"}
                 </p>
 
 
