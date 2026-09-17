@@ -67,20 +67,27 @@ const CONFIG = {
     {
       name: "Apă minerală",
       required: 18,
-      unit: "sticle",
+      unit: "sticle de 1.5 L",
       icon: "💧",
     },
     {
       name: "Apă dulce",
       required: 12,
-      unit: "sticle",
-      icon: "💧",
+      unit: "sticle de 1.25 L",
+      icon: "🥤",
     },
     {
       name: "Pâine",
       required: 7,
       unit: "franzele feliate",
       icon: "🍞",
+    },
+    {
+      name: "Altceva",
+      required: 5,
+      unit: "",
+      icon: "🎁",
+      suggestions: ["🥜 Alune", "🌰 Nuci", "🌻 Semințe"],
     },
   ],
 };
