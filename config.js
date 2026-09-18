@@ -84,7 +84,7 @@ const CONFIG = {
     },
     {
       name: "Altceva",
-      required: 5,
+      required: 10,
       unit: "🥜 Alune , 🌻 Semințe",
       icon: "🎁",
     },
