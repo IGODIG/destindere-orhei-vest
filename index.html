@@ -44,16 +44,19 @@
           <li>
             <a href="#home">Acasă</a>
           </li>
-
+          <li>
+            <a href="#memories">Adauga Poze</a>
+          </li>
+          <li>
+            <a href="#memories">Adauga Poze</a>
+          </li>
           <li>
             <a href="#event">Eveniment</a>
           </li>
           <li>
             <a href="#gallery">Galerie</a>
           </li>
-          <li>
-            <a href="#memories">Adauga Poze</a>
-          </li>
+          <!-- DEZACTIVAT DUPĂ EVENIMENT - PĂSTRAT PENTRU EVENIMENTE VIITOARE
           <li>
             <a href="#register">Participare</a>
           </li>
@@ -61,6 +64,7 @@
           <li>
             <a href="#stats">Statistici</a>
           </li>
+          -->
 
           <li>
             <a href="#location">Locație</a>
@@ -76,16 +80,21 @@
     <section class="hero" id="home">
       <div class="container">
         <h2>20 Septembrie 2026</h2>
-        <h1>DESTINDERE</h1>
+        <h1>AMINTIRI de la DESTINDERE</h1>
 
         <h2>
           Iată ce bine și ce plăcut este ca frații să locuiască împreună în
           unitate!
         </h2>
         <p>PS. 133:1</p>
+        <!-- DEZACTIVAT DUPĂ EVENIMENT - PĂSTRAT PENTRU EVENIMENTE VIITOARE
         <a href="#register" class="btn"> Confirmă participarea </a>
+        -->
       </div>
     </section>
+
+    <!-- COUNTDOWN: DEZACTIVAT DUPĂ EVENIMENT. PĂSTRAT PENTRU EVENIMENTE VIITOARE.
+
 
     <section class="countdown">
       <div class="container">
@@ -115,254 +124,9 @@
       </div>
     </section>
 
-    <section class="features" id="event">
-      <div class="container">
-        <h2 class="section-title">Ce vom avea?</h2>
+    
 
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="icon">🎶</div>
-            <h3>Muzică Live</h3>
-          </div>
-
-          <div class="feature-card">
-            <div class="icon">📸</div>
-            <h3>Photo Zone</h3>
-          </div>
-
-          <div class="feature-card">
-            <div class="icon">🎁</div>
-            <h3>O Surpriză Specială</h3>
-          </div>
-
-          <div class="feature-card">
-            <div class="icon">🎯</div>
-            <h3>Activități interesante</h3>
-          </div>
-
-          <div class="feature-card">
-            <div class="icon">☕</div>
-            <h3>Relaxare</h3>
-          </div>
-
-          <div class="feature-card">
-            <div class="icon">🍂</div>
-            <h3>Decor de Toamnă</h3>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- ========================= -->
-    <!-- GALLERY -->
-    <!-- ========================= -->
-
-    <section class="gallery" id="gallery">
-      <div class="container">
-        <h2 class="section-title">Galerie</h2>
-
-        <div class="gallery-grid">
-          <div class="gallery-card">
-            <img
-              src="./assets/images/gallery/photo1.png"
-              alt="Amintiri frumoase"
-            />
-            <div class="gallery-title">Amintiri frumoase</div>
-          </div>
-
-          <div class="gallery-card">
-            <img
-              src="./assets/images/gallery/photo2.png"
-              alt="Amintiri frumoase"
-            />
-            <div class="gallery-title">Amintiri frumoase</div>
-          </div>
-
-          <div class="gallery-card">
-            <img src="./assets/images/gallery/photo3.png" alt="Va urma" />
-            <div class="gallery-title">Va urma...</div>
-          </div>
-
-          <div class="gallery-card">
-            <img src="./assets/images/gallery/photo4.png" alt="Va urma" />
-            <div class="gallery-title">Va urma...</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================= -->
-    <!-- REGISTER -->
-    <!-- ========================= -->
-
-    <section class="register" id="register">
-      <div class="container">
-        <h2 class="section-title">Confirmă participarea</h2>
-        <form id="registrationForm">
-          <!-- NUME -->
-
-          <select id="guestSelect" name="nume_complet" required>
-            <option value="">Se încarcă lista...</option>
-          </select>
-
-          <!-- PARTICIPARE -->
-
-          <select name="participa" required>
-            <option value="">Particip?</option>
-
-            <option value="Da">Da</option>
-
-            <option value="Nu">Nu</option>
-          </select>
-
-          <!-- NUMĂR PERSOANE -->
-
-          <select name="persoane" required>
-            <option value="">Număr persoane</option>
-
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-          </select>
-
-          <!-- CE ADUCE -->
-
-          <div class="product-row">
-            <select name="ce_aduce_1">
-              <option value="">Ce dorești să aduci?</option>
-
-              <option value="Legume">Legume</option>
-              <option value="Fructe">Fructe</option>
-              <option value="Plăcinte">Plăcinte</option>
-              <option value="Snack-uri">Snack-uri</option>
-              <option value="Prăjituri">Prăjituri</option>
-              <option value="Suc">Suc</option>
-              <option value="Apă minerală">Apă minerală</option>
-              <option value="Apă dulce">Apă dulce</option>
-              <option value="Pâine">Pâine</option>
-              <option value="Altceva">Altceva</option>
-            </select>
-
-            <input
-              type="number"
-              name="cantitate_1"
-              min="0.1"
-              step="0.1"
-              placeholder="Cantitate"
-            />
-          </div>
-
-          <div class="product-row">
-            <select name="ce_aduce_2">
-              <option value="">Ce dorești să mai aduci?</option>
-
-              <option value="Legume">Legume</option>
-              <option value="Fructe">Fructe</option>
-              <option value="Plăcinte">Plăcinte</option>
-              <option value="Snack-uri">Snack-uri</option>
-              <option value="Prăjituri">Prăjituri</option>
-              <option value="Suc">Suc</option>
-              <option value="Apă minerală">Apă minerală</option>
-              <option value="Apă dulce">Apă dulce</option>
-              <option value="Pâine">Pâine</option>
-              <option value="Altceva">Altceva</option>
-            </select>
-
-            <input
-              type="number"
-              name="cantitate_2"
-              min="0.1"
-              step="0.1"
-              placeholder="Cantitate"
-            />
-          </div>
-
-          <!-- OBSERVAȚII -->
-
-          <textarea
-            name="observatii"
-            rows="5"
-            placeholder="Informații suplimentare"
-          ></textarea>
-
-          <!-- TRIMITERE -->
-
-          <button type="submit">Trimite</button>
-        </form>
-      </div>
-    </section>
-
-    <section class="stats" id="stats">
-      <div class="container">
-        <h2 class="section-title">Cine va veni?</h2>
-
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Invitații</h3>
-            <span id="invited">0</span>
-          </div>
-
-          <div class="stat-card">
-            <h3>Participă</h3>
-            <span id="confirmed">0</span>
-          </div>
-
-          <div class="stat-card">
-            <h3>Nu participă</h3>
-            <span id="declined">0</span>
-          </div>
-
-          <div class="stat-card">
-            <h3>Fără răspuns</h3>
-            <span id="waiting">0</span>
-          </div>
-
-          <div class="stat-card">
-            <h3>Total persoane</h3>
-            <span id="persons">0</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================= -->
-    <!-- FOOD -->
-    <!-- ========================= -->
-
-    <section class="food">
-      <div class="container">
-        <h2 class="section-title">Ce mai este necesar</h2>
-        <div id="foodProgress"></div>
-      </div>
-    </section>
-
-    <!-- ========================= -->
-    <!-- LOCATION -->
-    <!-- ========================= -->
-
-    <section class="location" id="location">
-      <div class="container">
-        <h2 class="section-title">Locația evenimentului</h2>
-
-        <div class="map">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1910.036346085665!2d28.838144542019688!3d47.388544042061945!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40cbef00641c883f%3A0xc51ae9283bc54452!2sPoiana%20OV!5e0!3m2!1sen!2s!4v1786436855627!5m2!1sen!2s"
-            width="100%"
-            height="460"
-            style="border: 0"
-            allowfullscreen
-            loading="lazy"
-            referrerpolicy="strict-origin-when-cross-origin"
-          ></iframe>
-        </div>
-      </div>
-    </section>
+END disabled-countdown -->
 
     <!-- ========================= -->
     <!-- AMINTIRI -->
@@ -418,6 +182,300 @@
     </section>
 
     <!-- ========================= -->
+    <!-- EVENT -->
+    <!-- ========================= -->
+
+    <section class="features" id="event">
+      <div class="container">
+        <h2 class="section-title">Ce am avut?</h2>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="icon">🎶</div>
+            <h3>Muzică Live</h3>
+          </div>
+
+          <div class="feature-card">
+            <div class="icon">📸</div>
+            <h3>Photo Zone</h3>
+          </div>
+
+          <div class="feature-card">
+            <div class="icon">🎁</div>
+            <h3>O Surpriză Specială</h3>
+          </div>
+
+          <div class="feature-card">
+            <div class="icon">🎯</div>
+            <h3>Activități interesante</h3>
+          </div>
+
+          <div class="feature-card">
+            <div class="icon">☕</div>
+            <h3>Relaxare</h3>
+          </div>
+
+          <div class="feature-card">
+            <div class="icon">🍂</div>
+            <h3>Decor de Toamnă</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- ========================= -->
+    <!-- GALLERY -->
+    <!-- ========================= -->
+
+    <section class="gallery" id="gallery">
+      <div class="container">
+        <h2 class="section-title">Galerie</h2>
+
+        <div class="gallery-grid">
+          <div class="gallery-card">
+            <img
+              src="./assets/images/gallery/photo1.png"
+              alt="Amintiri frumoase"
+            />
+            <div class="gallery-title">Amintiri</div>
+          </div>
+
+          <div class="gallery-card">
+            <img
+              src="./assets/images/gallery/photo2.png"
+              alt="Amintiri frumoase"
+            />
+            <div class="gallery-title">Amintiri</div>
+          </div>
+
+          <div class="gallery-card">
+            <img
+              src="./assets/images/gallery/photo3.jpg"
+              alt="Amintiri de la Destindere"
+            />
+            <div class="gallery-title">Amintiri</div>
+          </div>
+
+          <div class="gallery-card">
+            <img
+              src="./assets/images/gallery/photo4.jpg"
+              alt="Amintiri de la Destindere"
+            />
+            <div class="gallery-title">Amintiri</div>
+          </div>
+        </div>
+
+        <div
+          class="gallery-drive"
+          style="text-align: center; margin-top: 100px"
+        >
+          <a
+            href="https://drive.google.com/drive/folders/1UrOCtN2ixkyoykDeaV43UakTHbn8DiKE?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn"
+          >
+            📸 Vezi toate fotografiile în Google Drive
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
+    <!-- REGISTER -->
+    <!-- ========================= -->
+
+    <!-- REGISTRATION: DEZACTIVAT DUPĂ EVENIMENT. PĂSTRAT PENTRU EVENIMENTE VIITOARE.
+
+
+    <section class="register" id="register">
+      <div class="container">
+        <h2 class="section-title">Confirmă participarea</h2>
+        <form id="registrationForm">
+          /* NUME */
+
+          <select id="guestSelect" name="nume_complet" required>
+            <option value="">Se încarcă lista...</option>
+          </select>
+
+          /* PARTICIPARE */
+
+          <select name="participa" required>
+            <option value="">Particip?</option>
+
+            <option value="Da">Da</option>
+
+            <option value="Nu">Nu</option>
+          </select>
+
+          /* NUMĂR PERSOANE */
+
+          <select name="persoane" required>
+            <option value="">Număr persoane</option>
+
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+
+          /* CE ADUCE */
+
+          <div class="product-row">
+            <select name="ce_aduce_1">
+              <option value="">Ce dorești să aduci?</option>
+
+              <option value="Legume">Legume</option>
+              <option value="Fructe">Fructe</option>
+              <option value="Plăcinte">Plăcinte</option>
+              <option value="Snack-uri">Snack-uri</option>
+              <option value="Prăjituri">Prăjituri</option>
+              <option value="Suc">Suc</option>
+              <option value="Apă minerală">Apă minerală</option>
+              <option value="Apă dulce">Apă dulce</option>
+              <option value="Pâine">Pâine</option>
+              <option value="Altceva">Altceva</option>
+            </select>
+
+            <input
+              type="number"
+              name="cantitate_1"
+              min="0.1"
+              step="0.1"
+              placeholder="Cantitate"
+            />
+          </div>
+
+          <div class="product-row">
+            <select name="ce_aduce_2">
+              <option value="">Ce dorești să mai aduci?</option>
+
+              <option value="Legume">Legume</option>
+              <option value="Fructe">Fructe</option>
+              <option value="Plăcinte">Plăcinte</option>
+              <option value="Snack-uri">Snack-uri</option>
+              <option value="Prăjituri">Prăjituri</option>
+              <option value="Suc">Suc</option>
+              <option value="Apă minerală">Apă minerală</option>
+              <option value="Apă dulce">Apă dulce</option>
+              <option value="Pâine">Pâine</option>
+              <option value="Altceva">Altceva</option>
+            </select>
+
+            <input
+              type="number"
+              name="cantitate_2"
+              min="0.1"
+              step="0.1"
+              placeholder="Cantitate"
+            />
+          </div>
+
+          /* OBSERVAȚII */
+
+          <textarea
+            name="observatii"
+            rows="5"
+            placeholder="Informații suplimentare"
+          ></textarea>
+
+          /* TRIMITERE */
+
+          <button type="submit">Trimite</button>
+        </form>
+      </div>
+    </section>
+
+    
+
+END disabled-registration -->
+
+    <!-- STATISTICS: DEZACTIVAT DUPĂ EVENIMENT. PĂSTRAT PENTRU EVENIMENTE VIITOARE.
+
+
+    <section class="stats" id="stats">
+      <div class="container">
+        <h2 class="section-title">Cine va veni?</h2>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Invitații</h3>
+            <span id="invited">0</span>
+          </div>
+
+          <div class="stat-card">
+            <h3>Participă</h3>
+            <span id="confirmed">0</span>
+          </div>
+
+          <div class="stat-card">
+            <h3>Nu participă</h3>
+            <span id="declined">0</span>
+          </div>
+
+          <div class="stat-card">
+            <h3>Fără răspuns</h3>
+            <span id="waiting">0</span>
+          </div>
+
+          <div class="stat-card">
+            <h3>Total persoane</h3>
+            <span id="persons">0</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+
+END disabled-statistics -->
+
+    <!-- ========================= -->
+    <!-- FOOD -->
+    <!-- ========================= -->
+
+    <!-- FOOD: DEZACTIVAT DUPĂ EVENIMENT. PĂSTRAT PENTRU EVENIMENTE VIITOARE.
+
+
+    <section class="food">
+      <div class="container">
+        <h2 class="section-title">Ce mai este necesar</h2>
+        <div id="foodProgress"></div>
+      </div>
+    </section>
+
+    
+
+END disabled-food -->
+
+    <!-- ========================= -->
+    <!-- LOCATION -->
+    <!-- ========================= -->
+
+    <section class="location" id="location">
+      <div class="container">
+        <h2 class="section-title">Locația evenimentului</h2>
+
+        <div class="map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1910.036346085665!2d28.838144542019688!3d47.388544042061945!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40cbef00641c883f%3A0xc51ae9283bc54452!2sPoiana%20OV!5e0!3m2!1sen!2s!4v1786436855627!5m2!1sen!2s"
+            width="100%"
+            height="460"
+            style="border: 0"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================= -->
     <!-- FOOTER -->
     <!-- ========================= -->
 
@@ -431,13 +489,19 @@
 
     <script src="./config.js"></script>
 
+    <!-- PENTRU EVENIMENTE VIITOARE: countdown.js
     <script src="./assets/js/countdown.js"></script>
+    -->
 
     <script src="./assets/js/script.js"></script>
 
+    <!-- PENTRU EVENIMENTE VIITOARE: stats.js
     <script src="./assets/js/stats.js"></script>
+    -->
 
+    <!-- PENTRU EVENIMENTE VIITOARE: google-sheet.js
     <script src="assets/js/google-sheet.js"></script>
+    -->
 
     <script src="./assets/js/upload.js"></script>
   </body>
