@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin • Destindere</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/css/admin.css">
+</head>
+<body>
+<header class="admin-top">
+  <div class="brand">
+    <strong>⚙️ Administrare eveniment / Configurație locală</strong>
+    <span id="saveState">Configurație locală</span>
+  </div>
+  <div class="admin-user">
+    <strong id="adminUserName"></strong>
+    <span id="adminUserCongregation"></span>
+  </div>
+  <div class="top-actions">
+    <a href="index.html" target="_blank" rel="noopener">Vezi site-ul ↗</a>
+    <button id="exportBtn">Exportă config</button>
+    <button id="importBtn">Importă config</button>
+    <button id="logoutAdmin" type="button">Ieșire</button>
+    <input id="importFile" type="file" accept="application/json" hidden>
+  </div>
+</header>
+
+<main class="admin-wrap">
+  <section class="panel event-panel">
+    <div class="section-heading"><div><span class="eyebrow">CONFIGURAȚIE GENERALĂ</span><h1>Eveniment</h1></div><span class="section-badge">● Editabil</span></div>
+    <div class="grid two">
+      <label>Nume eveniment<input id="eventName"></label>
+      <label>Congregație<input id="congregation"></label>
+      <label>Data<input id="eventDate" type="date"></label>
+      <label>Ora<input id="eventTime" type="time"></label>
+      <label class="wide">Locație<input id="eventLocation"></label>
+      <label class="wide">Titlu Hero<input id="heroTitle"></label>
+      <label class="wide">Text secundar Hero<textarea id="heroSubtitle"></textarea></label>
+      <label class="wide">Verset<textarea id="heroVerse"></textarea></label>
+      <label class="wide">Imagine Hero<div class="hero-image-editor"><div class="hero-thumb-wrap"><img id="heroImagePreview" class="hero-thumb" src="" alt=""><span id="heroImagePlaceholder" class="hero-placeholder">🖼️</span></div><div><input id="heroImage" placeholder="./assets/images/hero/hero.jpg sau URL complet"><small class="field-note">Poți folosi o imagine din proiect sau un URL direct către imagine.</small></div></div></label>
+      <label class="wide">Footer<input id="footerText"></label>
+    </div>
+  </section>
+
+  <div id="settingsPanels" class="sortable-modules">
+    <section class="panel accordion open" data-panel="countdown">
+      <button class="accordion-head" type="button"><span><b>⏱</b><span><strong>Countdown</strong><small>Numărătoare până la eveniment, apoi mesajul de început</small></span></span><span class="module-head-actions"><span class="module-status" data-status-for="countdown"></span><span class="accordion-chevron" aria-hidden="true"></span></span></button>
+      <div class="accordion-body">
+        <div class="module-name-row"><label>Nume modul<input class="module-label-input" data-label-for="countdown"></label><p class="note inline-note">Același nume va fi folosit automat în Header când modulul este afișat acolo.</p></div>
+        <div class="setting-grid two">
+          <label>Titlu<input id="countdownTitle"></label>
+          <label>Mesaj după începerea evenimentului<input id="startedMessage"></label>
+          <p class="note wide">La ora evenimentului, numărătoarea se transformă automat în mesajul „Evenimentul a început.” și rămâne afișată 24 de ore. După 24 de ore, modulul devine automat INACTIV.</p>
+        </div>
+        <p class="note">Data și ora sunt preluate automat din secțiunea „Eveniment”. Nu există o a doua dată de configurat.</p>
+      </div>
+    </section>
+
+    <section class="panel accordion" data-panel="gallery">
+      <button class="accordion-head" type="button"><span><b>📸</b><span><strong>Galerie</strong><small>Fotografii și butonul Google Drive</small></span></span><span class="module-head-actions"><span class="module-status" data-status-for="gallery"></span><label class="menu-toggle"><input type="checkbox" data-menu-for="gallery"><span>Header</span></label><span class="accordion-chevron" aria-hidden="true"></span></span></button>
+      <div class="accordion-body">
+        <div class="module-name-row"><label>Nume modul<input class="module-label-input" data-label-for="gallery"></label><p class="note inline-note">Același nume va fi folosit automat în Header când modulul este afișat acolo.</p></div>
+        <div class="setting-grid two">
+          <label>Titlu<input id="galleryTitle"></label>
+          <label class="switch-line"><input id="driveEnabled" type="checkbox"><span class="switch"></span><span>Buton Google Drive</span></label>
+          <label>Text buton<input id="driveText"></label>
+          <label class="wide">Link Google Drive<input id="driveUrl"></label>
+        </div>
+        <div class="subheading"><strong>Fotografii</strong><span>Poți adăuga, edita sau elimina imaginile.</span></div>
+        <div id="galleryList" class="gallery-editor"></div>
+        <button class="secondary add-btn" id="addImage" type="button">＋ Adaugă imagine</button>
+      </div>
+    </section>
+
+    <section class="panel accordion" data-panel="features">
+      <button class="accordion-head" type="button"><span><b>✨</b><span><strong>Ce am pregătit? / Cum a fost?</strong><small>Denumirea se schimbă automat după începerea evenimentului</small></span></span><span class="module-head-actions"><span class="module-status" data-status-for="features"></span><label class="menu-toggle"><input type="checkbox" data-menu-for="features"><span>Header</span></label><span class="accordion-chevron" aria-hidden="true"></span></span></button>
+      <div class="accordion-body">
+        <div class="module-name-row"><label>Nume modul<input class="module-label-input" data-label-for="features"></label><p class="note inline-note">Același nume va fi folosit automat în Header când modulul este afișat acolo.</p></div>
+        <div class="setting-grid two">
+          <label>Titlu înainte de eveniment<input id="featuresTitleBefore"></label>
+          <label>Titlu după eveniment<input id="featuresTitleAfter"></label>
+          <label>Text în meniu înainte<input id="featuresMenuBefore"></label>
+          <label>Text în meniu după<input id="featuresMenuAfter"></label>
+        </div>
+        <div class="subheading"><strong>Elemente</strong><span>Dezactivează sau șterge ce nu mai este necesar.</span></div>
+        <div id="featuresList" class="features-editor"></div>
+        <button class="secondary add-btn" id="addFeature" type="button">＋ Adaugă element</button>
+      </div>
+    </section>
+
+    <section class="panel accordion" data-panel="memories">
+      <button class="accordion-head" type="button"><span><b>🖼</b><span><strong>Amintiri / Adaugă poze</strong><small>Textul secțiunii pentru fotografii și videoclipuri</small></span></span><span class="module-head-actions"><span class="module-status" data-status-for="memories"></span><label class="menu-toggle"><input type="checkbox" data-menu-for="memories"><span>Header</span></label><span class="accordion-chevron" aria-hidden="true"></span></span></button>
+      <div class="accordion-body">
+        <div class="module-name-row"><label>Nume modul<input class="module-label-input" data-label-for="memories"></label><p class="note inline-note">Același nume va fi folosit automat în Header când modulul este afișat acolo.</p></div>
+        <div class="setting-grid">
+          <label>Titlu<input id="memoriesTitle"></label>
+          <label>Descriere<textarea id="memoriesText"></textarea></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel accordion" data-panel="location">
+      <button class="accordion-head" type="button"><span><b>📍</b><span><strong>Locație</strong><small>Numele locației și harta Google Maps</small></span></span><span class="module-head-actions"><span class="module-status" data-status-for="location"></span><label class="menu-toggle"><input type="checkbox" data-menu-for="location"><span>Header</span></label><span class="accordion-chevron" aria-hidden="true"></span></span></button>
+      <div class="accordion-body">
+        <div class="module-name-row"><label>Nume modul<input class="module-label-input" data-label-for="location"></label><p class="note inline-note">Același nume va fi folosit automat în Header când modulul este afișat acolo.</p></div>
+        <div class="setting-grid two">
+          <label>Titlu<input id="locationTitle"></label>
+          <label>Nume locație<input id="locationName"></label>
+          <label class="wide">Google Maps Embed URL<textarea id="mapUrl" class="compact-text"></textarea></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel accordion" data-panel="participation">
+      <button class="accordion-head" type="button"><span><b>👥</b><span><strong>Confirmă participarea</strong><small>Formular + buton central pe Home</small></span></span><span class="module-head-actions"><span class="module-status" data-status-for="participation"></span><span class="accordion-chevron" aria-hidden="true"></span></span></button>
+      <div class="accordion-body">
+        <div class="module-name-row"><label>Nume modul<input class="module-label-input" data-label-for="participation"></label><p class="note inline-note">Același nume va fi folosit automat în Header când modulul este afișat acolo.</p></div>
+        <div class="setting-grid two">
+          <label>Vizibilitate<select id="participationVisibility"><option value="untilEvent">Până la începerea evenimentului</option><option value="manual">Manual</option><option value="alwaysOff">Dezactivat</option></select></label>
+          <label>După începerea evenimentului<select id="participationAfterStart"><option value="hide">Ascunde automat</option><option value="keep">Păstrează afișat</option></select></label>
+          <label>Titlu<input id="participationTitle"></label>
+          <label class="wide">Descriere<textarea id="participationDescription"></textarea></label>
+          <label>Text buton<input id="participationButtonText"></label>
+          <label>Număr rânduri produse<input id="participationProductRows" type="number" min="0" max="5"></label>
+        </div>
+        <div class="subheading"><strong>Câmpuri formular</strong><span>Activează exact ce vrei să apară.</span></div>
+        <div class="field-checks">
+          <label class="switch-line"><input id="fieldName" type="checkbox"><span class="switch"></span><span>Nume</span></label>
+          <label class="switch-line"><input id="fieldParticipation" type="checkbox"><span class="switch"></span><span>Participare</span></label>
+          <label class="switch-line"><input id="fieldPersons" type="checkbox"><span class="switch"></span><span>Număr persoane</span></label>
+          <label class="switch-line"><input id="fieldProducts" type="checkbox"><span class="switch"></span><span>Ce aduce fiecare</span></label>
+          <label class="switch-line"><input id="fieldNotes" type="checkbox"><span class="switch"></span><span>Observații</span></label>
+        </div>
+        <p class="note" id="participationVisibilityNote">Modulul controlează formularul și butonul central „Confirmă participarea”. Nu există buton separat în Header.</p>
+        <p class="note">Trimiterea formularului rămâne prin Google Apps Script. Adminul controlează afișarea și conținutul, nu mută datele din Sheets.</p>
+      </div>
+    </section>
+
+    <section class="panel accordion" data-panel="stats">
+      <button class="accordion-head" type="button"><span><b>📊</b><span><strong>Statistici</strong><small>Datele sunt citite din Google Sheets</small></span></span><span class="module-head-actions"><span class="module-status" data-status-for="stats"></span><label class="menu-toggle"><input type="checkbox" data-menu-for="stats"><span>Header</span></label><span class="accordion-chevron" aria-hidden="true"></span></span></button>
+      <div class="accordion-body">
+        <div class="module-name-row"><label>Nume modul<input class="module-label-input" data-label-for="stats"></label><p class="note inline-note">Același nume va fi folosit automat în Header când modulul este afișat acolo.</p></div>
+        <div class="setting-grid">
+          <label>Titlu<input id="statsTitle"></label>
+          <label>După începerea evenimentului<select id="statsAfterStart"><option value="hide">Ascunde automat</option><option value="keep">Păstrează afișat</option></select></label>
+        </div>
+        <div class="subheading"><strong>Carduri statistici</strong><span>Etichetele sunt configurabile; valorile vin din Apps Script.</span></div>
+        <div id="statsList" class="stats-editor"></div>
+      </div>
+    </section>
+
+    <section class="panel accordion" data-panel="food">
+      <button class="accordion-head" type="button"><span><b>🍎</b><span><strong>Vreau să contribui</strong><small>Produsele sunt configurabile; progresul vine din Google Sheets</small></span></span><span class="module-head-actions"><span class="module-status" data-status-for="food"></span><label class="menu-toggle"><input type="checkbox" data-menu-for="food"><span>Header</span></label><span class="accordion-chevron" aria-hidden="true"></span></span></button>
+      <div class="accordion-body">
+        <div class="module-name-row"><label>Nume modul<input class="module-label-input" data-label-for="food"></label><p class="note inline-note">Același nume va fi folosit automat în Header când modulul este afișat acolo.</p></div>
+        <div class="setting-grid">
+          <label>Titlu<input id="foodTitle"></label>
+          <label>Descriere<textarea id="foodDescription"></textarea></label>
+          <label class="switch-line wide"><input id="foodHideCompleted" type="checkbox"><span class="switch"></span><span>Ascunde produsele completate</span></label>
+        </div>
+        <div class="subheading"><strong>Produse necesare</strong><span>Necesarul este configurabil aici. Cantitatea adusă rămâne în Google Sheets.</span></div>
+        <div id="foodList" class="food-editor"></div>
+        <button class="secondary add-btn" id="addFood" type="button">＋ Adaugă produs</button>
+        <p class="note">Progresul nu se introduce manual aici. Site-ul îl citește din Google Apps Script. Dacă activezi „Ascunde produsele completate”, un produs dispare imediat ce atinge necesarul. După începerea evenimentului, produsele completate sunt ascunse automat. După 24 de ore modulul devine automat INACTIV. Poate fi reactivat manual.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="bottom-actions">
+    <button class="primary" id="saveBtn" type="button">💾 Salvează modificările</button>
+    <button class="secondary reset" id="resetBtn" type="button">↺ Revino la configurația implicită</button>
+  </div>
+</main>
+
+<script src="./config.js"></script>
+<script src="./assets/js/admin.js"></script>
+</body>
+</html>

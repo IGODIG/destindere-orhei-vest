@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DESTINDERI JW MOLDOVA • Autentificare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/css/login.css">
+</head>
+<body>
+<div class="login-shell">
+  <div class="login-card">
+    <div class="login-logo">🍂</div>
+    <div class="eyebrow">DESTINDERI JW MOLDOVA</div>
+    <h1>Bine ai venit</h1>
+    <p class="login-subtitle">Introdu numele, prenumele și congregația pentru a continua.</p>
+    <form id="loginForm" novalidate>
+      <label>Nume<input id="loginNume" autocomplete="family-name" required></label>
+      <label>Prenume<input id="loginPrenume" autocomplete="given-name" required></label>
+      <label>Congregația<input id="loginCongregatie" autocomplete="organization" required></label>
+      <button class="primary" type="submit">INTRĂ</button>
+      <div id="loginMessage" class="login-message" role="status"></div>
+    </form>
+    <p class="local-note">Datele de acces sunt verificate în Google Sheets, iar sesiunea este păstrată local pe acest dispozitiv.</p>
+  </div>
+</div>
+<script src="./config.js"></script>
+<script src="./assets/js/login.js"></script>
+</body>
+</html>

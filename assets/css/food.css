@@ -309,3 +309,166 @@
     height: 10px;
   }
 }
+
+.food-meta{font-size:13px;margin:6px 0 10px;color:#666}.progress-track{height:10px;background:#ece7e1;border-radius:99px;overflow:hidden}.food-item{margin-bottom:20px}.food-item-header{display:flex;justify-content:space-between;align-items:center;gap:10px}.food-name{display:flex;gap:8px;align-items:center;font-weight:600}.progress-bar{height:100%;background:#b45309;border-radius:99px;transition:width .4s ease}
+
+
+/* ==========================================================
+   V8 - CARD DESIGN USED BY THE ACTUAL FOOD DOM
+========================================================== */
+#foodProgress.food-grid {
+  width: 100%;
+  max-width: 1050px;
+  margin: 50px auto 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+#foodProgress .food-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 20px;
+  min-height: 185px;
+  padding: 25px;
+  background: #fff;
+  border-radius: 26px;
+  border: 1px solid rgba(139, 69, 19, 0.08);
+  box-shadow: 0 8px 25px rgba(80, 50, 20, 0.06);
+  overflow: hidden;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+#foodProgress .food-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(80, 50, 20, 0.10);
+}
+
+#foodProgress .food-card::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  right: -50px;
+  top: -50px;
+  border-radius: 50%;
+  background: rgba(251, 191, 36, .08);
+  pointer-events: none;
+}
+
+#foodProgress .food-card-icon {
+  width: 76px;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 24px;
+  background: linear-gradient(145deg, #fff4e4, #ffe2b8);
+  font-size: 38px;
+  line-height: 1;
+  box-shadow: 0 8px 20px rgba(217, 119, 6, .12);
+  z-index: 1;
+}
+
+#foodProgress .food-card-content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 1;
+}
+
+#foodProgress .food-card-content h3 {
+  margin: 0;
+  color: #603813;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+#foodProgress .food-required-text {
+  margin: 5px 0 18px;
+  color: #9a8f84;
+  font-size: .75rem;
+}
+
+#foodProgress .food-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+#foodProgress .food-card-bottom span {
+  color: #8c8177;
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .5px;
+}
+
+#foodProgress .food-card-bottom strong {
+  color: #d97706;
+  font-size: .9rem;
+  font-weight: 700;
+}
+
+#foodProgress .food-progress {
+  width: 100%;
+  height: 12px;
+  padding: 2px;
+  background: #f1ebe4;
+  border-radius: 999px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+#foodProgress .food-progress-bar {
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);
+  box-shadow: 0 2px 8px rgba(217, 119, 6, .25);
+  transition: width 1s cubic-bezier(.4, 0, .2, 1);
+}
+
+#foodProgress .food-card.is-complete .food-progress-bar {
+  background: linear-gradient(90deg, #15803d, #22c55e);
+}
+
+#foodProgress .food-card.is-complete .food-card-bottom strong {
+  color: #15803d;
+}
+
+.food-description {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 700px;
+}
+
+@media (max-width: 850px) {
+  #foodProgress.food-grid { grid-template-columns: 1fr; max-width: 650px; }
+}
+
+@media (max-width: 500px) {
+  #foodProgress.food-grid { margin-top: 35px; gap: 16px; }
+  #foodProgress .food-card {
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 15px;
+    min-height: 160px;
+    padding: 20px;
+    border-radius: 22px;
+  }
+  #foodProgress .food-card-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 19px;
+    font-size: 29px;
+  }
+  #foodProgress .food-card-content h3 { font-size: .9rem; }
+  #foodProgress .food-required-text { margin-bottom: 15px; font-size: .68rem; }
+  #foodProgress .food-card-bottom span { font-size: .65rem; }
+  #foodProgress .food-card-bottom strong { font-size: .78rem; }
+  #foodProgress .food-progress { height: 10px; }
+}

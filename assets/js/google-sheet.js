@@ -21,78 +21,112 @@ document.addEventListener("DOMContentLoaded", function () {
   // ACTUALIZARE PRODUSE
   // ==========================================
 
-  function updateFoodProgress(produse) {
-    if (!produse) {
-      return;
+  function normalizeProductName(value) {
+    return String(value ?? "")
+      .trim()
+      .toLocaleLowerCase("ro-RO")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+  }
+
+  function toNumber(value) {
+    if (typeof value === "object" && value !== null) {
+      value = value.adus ?? value.current ?? value.quantity ?? value.cantitate ?? value.total ?? value.value ?? value.valoare;
+    }
+    if (typeof value === "string") {
+      value = value.replace(/\s/g, "").replace(",", ".");
+    }
+    const number = Number(value);
+    return Number.isFinite(number) ? number : 0;
+  }
+
+  function getProductsData(data) {
+    if (!data) return {};
+    return data.produse || data.products || data.food || {};
+  }
+
+  function getCurrentForProduct(produse, productId, productName) {
+    if (!produse) return 0;
+
+    const targetId = String(productId || "").trim();
+    const target = normalizeProductName(productName);
+
+    // Format obiect recomandat: { "food_001": 6, "food_002": 4 }
+    if (!Array.isArray(produse) && typeof produse === "object") {
+      if (targetId && Object.prototype.hasOwnProperty.call(produse, targetId)) return toNumber(produse[targetId]);
+      const key = Object.keys(produse).find(function (key) {
+        return normalizeProductName(key) === target;
+      });
+      if (key !== undefined) return toNumber(produse[key]);
     }
 
-    const foodItems = document.querySelectorAll(".food-item");
+    // Format array recomandat: [{id:"food_001", name:"Suc", adus:6}, ...]
+    if (Array.isArray(produse)) {
+      const row = produse.find(function (item) {
+        if (!item || typeof item !== "object") return false;
+        if (targetId && String(item.id ?? item.productId ?? item.produsId ?? "").trim() === targetId) return true;
+        return normalizeProductName(item.name ?? item.nume ?? item.produs ?? item.product) === target;
+      });
+      if (row) return toNumber(row);
+    }
+
+    return 0;
+  }
+
+  function updateFoodProgress(produse) {
+    const foodItems = document.querySelectorAll("#foodProgress .food-card");
+    if (!foodItems.length) return;
 
     foodItems.forEach(function (item) {
-      const nameElement = item.querySelector(".food-name span:last-child");
-
-      const numberElement = item.querySelector(
-        ".food-item-header > span:last-child",
-      );
-
-      const progressBar = item.querySelector(".progress-bar");
-
-      if (!nameElement) {
-        return;
-      }
-
-      const productName = nameElement.textContent.trim();
-
-      // ==========================================
-      // GĂSEȘTE PRODUSUL
-      // ==========================================
-
-      const productKey = Object.keys(produse).find(function (key) {
-        return key === productName || productName.startsWith(key);
+      const productName = item.dataset.productName || "";
+      const productId = item.dataset.productId || "";
+      const configProduct = (CONFIG.food?.products || []).find(function (product) {
+        return (product.id && product.id === productId) || normalizeProductName(product.name) === normalizeProductName(productName);
       });
 
-      // Cantitatea totală din Google Sheets
-      const current = productKey ? Number(produse[productKey]) : 0;
+      if (!configProduct) return;
 
-      // ==========================================
-      // GĂSEȘTE NECESARUL DIN CONFIG
-      // ==========================================
+      const current = getCurrentForProduct(produse, productId, productName);
+      const required = toNumber(configProduct.required);
+      const percentage = required > 0 ? Math.min((current / required) * 100, 100) : 0;
+      const rounded = Math.round(percentage);
 
-      const configProduct = CONFIG.products.find(function (product) {
-        return (
-          productName === product.name || productName.startsWith(product.name)
-        );
-      });
+      const numberElement = item.querySelector(".food-progress-number");
+      const progressBar = item.querySelector(".food-progress-bar");
+      const progress = item.querySelector(".food-progress");
+      const label = item.querySelector(".food-progress-label");
 
-      if (!configProduct) {
-        return;
+      if (numberElement) numberElement.textContent = current + " / " + required + (configProduct.unit ? " " + configProduct.unit : "");
+      if (progressBar) progressBar.style.width = rounded + "%";
+      if (progress) progress.setAttribute("aria-valuenow", String(rounded));
+
+      const complete = current >= required && required > 0;
+      if (complete) {
+        if (label) label.textContent = "COMPLET";
+        item.classList.add("is-complete");
+        // Poți ascunde produsele completate din Configurație.
+        // După începerea evenimentului, cele completate rămân ascunse automat.
+        if (typeof CONFIG !== "undefined") {
+          const eventTime = new Date(`${CONFIG.event.date}T${CONFIG.event.time || "00:00"}:00`).getTime();
+          const hideCompleted = CONFIG.food?.hideCompleted === true;
+          item.hidden = hideCompleted || Date.now() >= eventTime;
+        }
+      } else {
+        if (label) label.textContent = "PROGRES";
+        item.classList.remove("is-complete");
+        item.hidden = false;
       }
 
-      const required = Number(configProduct.required);
-
-      // ==========================================
-      // PROCENTAJ
-      // ==========================================
-
-      const percentage =
-        required > 0 ? Math.min((current / required) * 100, 100) : 0;
-
-      // ==========================================
-      // TEXT
-      // Exemplu:
-      // 4 / 15
-      // ==========================================
-
-      if (numberElement) {
-        numberElement.textContent = current + " / " + required;
-      }
-
-      // ==========================================
-      // BARA DE PROGRES
-      // ==========================================
-
-      if (progressBar) {
-        progressBar.style.width = percentage + "%";
+      const foodSection = document.getElementById("food");
+      if (foodSection && typeof CONFIG !== "undefined") {
+        const eventTime = new Date(`${CONFIG.event.date}T${CONFIG.event.time || "00:00"}:00`).getTime();
+        if (Date.now() >= eventTime) {
+          const remaining = document.querySelectorAll("#foodProgress .food-card:not([hidden])");
+          const hasRemaining = remaining.length > 0;
+          foodSection.hidden = !hasRemaining;
+          const foodNav = document.querySelector('#mainNav a[href="#food"]');
+          if (foodNav) foodNav.closest("li").hidden = !hasRemaining;
+        }
       }
     });
   }

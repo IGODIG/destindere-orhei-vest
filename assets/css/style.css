@@ -539,7 +539,7 @@ nav a.active::after {
 .stats-grid {
   display: grid;
 
-  grid-template-columns: repeat(5, 150px);
+  grid-template-columns: repeat(auto-fit, 150px);
 
   justify-content: center;
 
@@ -630,6 +630,19 @@ nav a.active::after {
 /* ==========================================================
    FOOTER
 ========================================================== */
+
+
+.admin-login-link {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 0.78em;
+  font-weight: 400;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.admin-login-link:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
 
 footer {
   padding: 35px 20px;
@@ -726,3 +739,14 @@ footer {
 
   font-size: 0.75rem;
 }
+
+/* Modul configurabil: verset biblic */
+.bible-text{max-width:850px;margin:0 auto;text-align:center;font-size:1.25rem;line-height:1.8;font-style:italic}
+
+[hidden]{display:none!important}
+
+/* Buton central Confirmă participarea, controlat de modulul de participare */
+.hero-action{display:flex;justify-content:center;margin-top:24px}
+.hero-participation-btn{display:inline-flex;align-items:center;justify-content:center;min-width:220px;text-decoration:none;font-weight:600}
+
+.profile-section{padding:50px 0}.profile-card{max-width:520px;margin:auto;text-align:center;background:rgba(255,255,255,.78);padding:28px;border-radius:22px;box-shadow:0 16px 40px rgba(0,0,0,.08)}.profile-card h2{color:var(--secondary);margin-bottom:6px}.profile-card p{color:var(--gray);margin-bottom:18px}.nav-user{white-space:nowrap}
