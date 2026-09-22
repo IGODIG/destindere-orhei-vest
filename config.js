@@ -857,6 +857,89 @@ function startCentralConfigWatcher(intervalMs = 60000) {
 }
 
 /* ==========================================================
+   EVENIMENTE - API CLIENT
+========================================================== */
+
+async function fetchEvents() {
+  const response = await fetch(DEFAULT_CONFIG.apiUrl + "?type=events&_=" + Date.now(), { cache: "no-store" });
+  if (!response.ok) throw new Error("Evenimente HTTP " + response.status);
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message || "Evenimentele nu sunt disponibile.");
+  return data.events || [];
+}
+
+async function fetchEvent(eventId) {
+  const response = await fetch(DEFAULT_CONFIG.apiUrl + "?type=event&eventId=" + encodeURIComponent(eventId) + "&_=" + Date.now(), { cache: "no-store" });
+  if (!response.ok) throw new Error("Eveniment HTTP " + response.status);
+  const data = await response.json();
+  if (!data.success || !data.event) throw new Error(data.message || "Evenimentul nu este disponibil.");
+  return data.event;
+}
+
+async function fetchActiveEventConfig() {
+  const response = await fetch(DEFAULT_CONFIG.apiUrl + "?type=activeEvent&_=" + Date.now(), { cache: "no-store" });
+  if (!response.ok) throw new Error("Eveniment activ HTTP " + response.status);
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message || "Evenimentul activ nu este disponibil.");
+  return data.event || null;
+}
+
+async function saveEventCentral(event, updatedBy) {
+  const payload = normalizeConfig(deepMerge(structuredClone(DEFAULT_CONFIG), event.config || event));
+  payload.apiUrl = DEFAULT_CONFIG.apiUrl;
+  const formData = new URLSearchParams();
+  formData.append("action", "saveEvent");
+  formData.append("eventId", event.id || payload.event.eventId || "");
+  formData.append("name", payload.event.name || "");
+  formData.append("congregation", payload.event.congregation || "");
+  formData.append("date", payload.event.date || "");
+  formData.append("time", payload.event.time || "00:00");
+  formData.append("location", payload.event.location || "");
+  formData.append("status", event.status || event.storedStatus || "PLANIFICAT");
+  formData.append("activeFrom", event.activeFrom || "");
+  formData.append("activeUntil", event.activeUntil || "");
+  formData.append("config", JSON.stringify(payload));
+  formData.append("updatedBy", updatedBy || "");
+  const response = await fetch(DEFAULT_CONFIG.apiUrl, { method: "POST", body: formData });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message || "Evenimentul nu a putut fi salvat.");
+  return data.event;
+}
+
+async function createEventCentral(sourceEventId, updatedBy) {
+  const formData = new URLSearchParams();
+  formData.append("action", "createEvent");
+  formData.append("sourceEventId", sourceEventId || "");
+  formData.append("updatedBy", updatedBy || "");
+  const response = await fetch(DEFAULT_CONFIG.apiUrl, { method: "POST", body: formData });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message || "Evenimentul nu a putut fi creat.");
+  return data.event;
+}
+
+async function activateEventCentral(eventId, updatedBy) {
+  const formData = new URLSearchParams();
+  formData.append("action", "activateEvent");
+  formData.append("eventId", eventId || "");
+  formData.append("updatedBy", updatedBy || "");
+  const response = await fetch(DEFAULT_CONFIG.apiUrl, { method: "POST", body: formData });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message || "Evenimentul nu a putut fi activat.");
+  return data.event;
+}
+
+async function archiveEventCentral(eventId, updatedBy) {
+  const formData = new URLSearchParams();
+  formData.append("action", "archiveEvent");
+  formData.append("eventId", eventId || "");
+  formData.append("updatedBy", updatedBy || "");
+  const response = await fetch(DEFAULT_CONFIG.apiUrl, { method: "POST", body: formData });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message || "Evenimentul nu a putut fi arhivat.");
+  return data.event;
+}
+
+/* ==========================================================
    CONFIG GLOBAL
 ========================================================== */
 
