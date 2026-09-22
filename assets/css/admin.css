@@ -67,3 +67,49 @@ select{display:block;width:100%;margin-top:6px;padding:10px 11px;border:1px soli
 .field-note{display:block;margin-top:5px;color:var(--muted);font-size:10px;font-weight:400}
 
 .hero-image-editor{display:grid;grid-template-columns:90px 1fr;gap:12px;align-items:center;margin-top:6px}.hero-thumb-wrap{position:relative;width:90px;height:60px}.hero-thumb,.hero-placeholder{width:90px;height:60px;border-radius:9px;object-fit:cover;background:#eee8e2;border:1px solid var(--line)}.hero-placeholder{display:grid;place-items:center;border:1px dashed #d6c9bc;background:#f5f1ec;color:#9a8f85;font-size:20px}.hero-thumb{display:none}.gallery-title-toggle{display:flex;align-items:center;justify-content:flex-start;gap:8px;width:max-content;margin:0;white-space:nowrap}.gallery-title-toggle input{margin:0;flex:0 0 auto}.gallery-title-toggle .switch{flex:0 0 auto}.gallery-title-toggle span:last-child{display:block;white-space:nowrap}.gallery-card-editor{grid-template-columns:42px 70px minmax(220px,1fr) minmax(140px,160px) 150px 34px!important}.gallery-card-editor .remove-img{justify-self:end}@media(max-width:800px){.hero-image-editor{grid-template-columns:64px 1fr}.hero-thumb-wrap,.hero-thumb,.hero-placeholder{width:64px;height:48px}.gallery-card-editor{grid-template-columns:48px 1fr 34px!important}.gallery-card-editor input:nth-of-type(2),.gallery-card-editor .gallery-title-toggle{grid-column:2/-1}.gallery-title-toggle{justify-self:start}}
+/* ==========================================================
+   EVENT MANAGER V2 - polished event management UI
+========================================================== */
+.event-control-grid{display:grid;grid-template-columns:1.35fr .65fr 1fr 1fr;gap:14px;align-items:stretch;margin-bottom:22px}
+.event-control-grid .wide{grid-column:auto}
+.event-select-field,.event-control-grid>label{min-width:0}
+.field-label{display:block;font-size:10px;font-weight:600;color:#4d4640;margin-bottom:6px}
+.event-status-card{border:1px solid #e3dbd2;border-radius:10px;background:#faf8f5;padding:10px 12px;display:flex;flex-direction:column;justify-content:center;min-height:61px}
+.event-status-badge{display:inline-flex;align-items:center;align-self:flex-start;gap:6px;border-radius:999px;padding:5px 10px;font-size:10px;font-weight:700;letter-spacing:.02em;background:#f1eee9;color:#6f665d;border:1px solid #ded7cf}
+.event-status-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:#9b938b}
+.event-status-badge[data-status="ACTIV"]{background:#edf8f0;color:#227343;border-color:#cfead8}
+.event-status-badge[data-status="ACTIV"]::before{background:#28a85a}
+.event-status-badge[data-status="PLANIFICAT"]{background:#fff8e8;color:#946200;border-color:#f0dfb1}
+.event-status-badge[data-status="PLANIFICAT"]::before{background:#e0a100}
+.event-status-badge[data-status="ARHIVAT"]{background:#f1f0f3;color:#68616f;border-color:#ddd9e2}
+.event-status-badge[data-status="ARHIVAT"]::before{background:#716a7c}
+.event-list-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #eee8e1;padding-top:18px;margin-bottom:10px}
+.event-list-heading strong{display:block;font-size:12px;color:#302a26}
+.event-list-heading span:not(.event-count){display:block;margin-top:2px;font-size:9px;color:var(--muted);font-weight:400}
+.event-count{display:grid;place-items:center;min-width:28px;height:28px;padding:0 9px;border-radius:999px;background:#f7f2ec;border:1px solid #e6ddd4;color:#756a61;font-size:10px;font-weight:700}
+.event-manager-list{display:grid;gap:8px}
+.event-manager-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:12px 13px;border:1px solid #e5ddd5;border-radius:12px;background:#fff;transition:.18s ease}
+.event-manager-row:hover{border-color:#d5c5b7;box-shadow:0 4px 14px rgba(70,48,31,.06);transform:translateY(-1px)}
+.event-manager-row.is-selected{border-color:#c98a56;box-shadow:0 0 0 2px rgba(180,83,9,.08)}
+.event-manager-main{min-width:0}
+.event-manager-title{display:flex;align-items:center;gap:8px;min-width:0}
+.event-manager-title strong{font-size:11px;color:#302a26;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.event-manager-meta{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:5px;color:#8a8178;font-size:9px}
+.event-manager-meta span{white-space:nowrap}
+.event-row-status{display:inline-flex;align-items:center;border-radius:999px;padding:5px 8px;font-size:8px;font-weight:700;white-space:nowrap}
+.event-row-status.ACTIV{background:#edf8f0;color:#227343}
+.event-row-status.PLANIFICAT{background:#fff8e8;color:#946200}
+.event-row-status.ARHIVAT{background:#f1f0f3;color:#68616f}
+.event-manager-actions{display:flex;align-items:center;gap:6px}
+.event-manager-actions button{border:1px solid #ddd4ca;background:#faf7f3;color:#54483f;border-radius:8px;padding:7px 9px;font:600 9px Poppins;cursor:pointer;white-space:nowrap;transition:.16s}
+.event-manager-actions button:hover{background:#f1e9e1;border-color:#cdbbaa;transform:translateY(-1px)}
+.event-manager-actions .row-activate{background:#eef8f1;border-color:#cfe8d6;color:#287346}
+.event-manager-actions .row-activate:hover{background:#e2f3e7}
+.event-manager-actions .row-delete{background:#fff5f3;border-color:#efd1ca;color:#a34738}
+.event-manager-actions .row-delete:hover{background:#ffe9e5;border-color:#dfaaa0}
+.danger-btn{border:1px solid #e6c6bf;background:#fff5f3;color:#a34738;border-radius:9px;padding:10px 13px;font:600 11px Poppins;cursor:pointer;transition:.18s}
+.danger-btn:hover:not(:disabled){background:#ffe9e5;border-color:#dba79d;transform:translateY(-1px)}
+.danger-btn:disabled,.secondary:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+.event-actions{align-items:center}
+@media(max-width:900px){.event-control-grid{grid-template-columns:1fr 1fr}.event-control-grid .wide{grid-column:1/-1}}
+@media(max-width:680px){.event-control-grid{grid-template-columns:1fr}.event-control-grid .wide{grid-column:auto}.event-manager-row{grid-template-columns:1fr}.event-manager-actions{justify-content:flex-start;flex-wrap:wrap}.event-manager-actions button{flex:1}.event-actions{align-items:stretch}}
