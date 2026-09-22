@@ -791,7 +791,7 @@ async function loadCentralConfig(options = {}) {
 
         const saved = await saveCentralConfig(
           fallback,
-          user ? `${user.prenume || ""} ${user.nume || ""}`.trim() : "Admin"
+          user?.id || ""
         );
 
         return saved.config;
