@@ -31,7 +31,6 @@
     normalizeModules();
     applyFoodAutoState();
     render();
-    startCentralConfigWatcher(60000);
   }
 
   const MODULE_IDS=["countdown","memories","features","gallery","participation","stats","food","location"];
