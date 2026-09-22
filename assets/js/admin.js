@@ -303,6 +303,14 @@
   function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")};function escAttr(v){return esc(v).replace(/'/g,"&#39;")}
   $("createEventBtn")?.addEventListener("click",async()=>{
     try{
+      // Clonează exact configurația aflată acum în editor, nu o versiune veche din server.
+      collect();
+      if(currentEvent?.id){
+        const saved=await saveEventCentral({...currentEvent,config:cfg},currentUser?.id||"");
+        currentEvent=saved;
+        cfg=normalizeConfig(deepMerge(clone(DEFAULT_CONFIG),saved.config||{}));
+        normalizeModules();
+      }
       const result=await createEventCentral(currentEvent?.id||"",currentUser?.id||"");
       events=await fetchEvents();
       await selectEvent(result.id);
