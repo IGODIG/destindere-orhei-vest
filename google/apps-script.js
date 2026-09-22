@@ -1042,6 +1042,7 @@ function eventRecordFromRowV2(row) {
     createdAt: row[11] ? new Date(row[11]).toISOString() : "",
     updatedAt: row[12] ? new Date(row[12]).toISOString() : "",
     updatedBy: String(row[13] || "").trim(),
+    configJSON: String(row[9] || "").trim(),
     configFileId: String(row[14] || "").trim(),
     folderId: String(row[15] || "").trim()
   };
