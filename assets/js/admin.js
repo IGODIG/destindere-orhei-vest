@@ -25,12 +25,60 @@
   });
   let cfg=clone(DEFAULT_CONFIG);
   cfg=normalizeConfig(cfg);
+  let events=[];
+  let currentEvent=null;
 
-  async function initAdminConfig(){
-    cfg = await loadCentralConfig({ bootstrapIfMissing: true });
+  const toLocalDateTime = value => {
+    if(!value) return "";
+    const d=new Date(value);
+    if(Number.isNaN(d.getTime())) return "";
+    const pad=n=>String(n).padStart(2,"0");
+    return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes());
+  };
+  const fromLocalDateTime = value => value ? new Date(value).toISOString() : "";
+
+  async function selectEvent(eventId){
+    const event=await fetchEvent(eventId);
+    currentEvent=event;
+    cfg=normalizeConfig(deepMerge(clone(DEFAULT_CONFIG),event.config||{}));
+    cfg.event.eventId=event.id;
     normalizeModules();
     applyFoodAutoState();
+    renderEventManager();
     render();
+  }
+
+  function renderEventManager(){
+    const selector=$("eventSelector"), list=$("eventsList");
+    if(selector){
+      selector.innerHTML=events.map(e=>"<option value=\""+escAttr(e.id)+"\">"+esc(e.name)+" • "+esc(e.status)+"</option>").join("");
+      if(currentEvent) selector.value=currentEvent.id;
+      selector.onchange=()=>selectEvent(selector.value).catch(err=>alert(err.message));
+    }
+    if(currentEvent){
+      val("eventStatus",currentEvent.storedStatus||currentEvent.status||"PLANIFICAT");
+      val("activeFrom",toLocalDateTime(currentEvent.activeFrom));
+      val("activeUntil",toLocalDateTime(currentEvent.activeUntil));
+    }
+    if(list){
+      list.innerHTML=events.map(e=>"<div class=\"event-manager-row\"><div><strong>"+esc(e.name)+"</strong><small>"+esc(e.date||"")+" "+esc(e.time||"")+" • "+esc(e.location||"")+"</small></div><span>"+e.status+"</span><button type=\"button\" data-event-open=\""+escAttr(e.id)+"\">👁 Vezi</button></div>").join("");
+      list.querySelectorAll("[data-event-open]").forEach(btn=>btn.onclick=()=>selectEvent(btn.dataset.eventOpen).catch(err=>alert(err.message)));
+    }
+  }
+
+  async function loadEventList(){
+    events=await fetchEvents();
+    if(!events.length){
+      cfg=await loadCentralConfig({bootstrapIfMissing:true});
+      currentEvent={id:"",name:cfg.event.name,status:"ACTIV",storedStatus:"ACTIV",activeFrom:"",activeUntil:"",config:cfg};
+      normalizeModules();
+      applyFoodAutoState();
+      renderEventManager();
+      render();
+      return;
+    }
+    const active=events.find(e=>e.status==="ACTIV")||events[0];
+    await selectEvent(active.id);
   }
 
   const MODULE_IDS=["countdown","memories","features","gallery","participation","stats","food","location"];
@@ -172,6 +220,13 @@
   function updateParticipationHint(){const e=$("participationVisibility"),note=$("participationVisibilityNote");if(!e||!note)return;note.textContent=e.value==="untilEvent"?"Formularul și butonul central de pe Home sunt vizibile până la data și ora evenimentului. După începere, dispar automat.":e.value==="manual"?"Vizibilitatea este controlată de statusul modulului. Poți reactiva modulul manual după eveniment.":"Formularul și butonul central rămân ascunse.";}
   function collect(){
     syncOrderFromDOM();
+    cfg.event.eventId=currentEvent?.id||cfg.event.eventId||"";
+    if(currentEvent){
+      currentEvent.status=$("eventStatus").value;
+      currentEvent.storedStatus=currentEvent.status;
+      currentEvent.activeFrom=fromLocalDateTime($("activeFrom").value);
+      currentEvent.activeUntil=fromLocalDateTime($("activeUntil").value);
+    }
     cfg.event.name=$("eventName").value;cfg.event.congregation=$("congregation").value;cfg.event.date=$("eventDate").value;cfg.event.time=$("eventTime").value;cfg.event.location=$("eventLocation").value;cfg.event.heroTitle=$("heroTitle").value;cfg.event.heroSubtitle=$("heroSubtitle").value;cfg.event.heroVerse=$("heroVerse").value;cfg.event.heroImage=$("heroImage").value.trim() || DEFAULT_CONFIG.event.heroImage;cfg.event.footer=$("footerText").value;
     cfg.countdown.title=$("countdownTitle").value;cfg.countdown.startedMessage=$("startedMessage").value;cfg.countdown.hideAfterStart=false;cfg.countdown.afterStartHours=24;
     cfg.gallery.title=$("galleryTitle").value;cfg.gallery.driveEnabled=$("driveEnabled").checked;cfg.gallery.driveText=$("driveText").value;cfg.gallery.driveUrl=$("driveUrl").value;
@@ -202,11 +257,18 @@
     state.textContent="Se salvează online...";
     state.classList.remove("saved");
     try{
-      const result=await saveCentralConfig(cfg, currentUser?.id || "");
-      cfg=result.config;
+      const result=currentEvent?.id
+        ? await saveEventCentral({...currentEvent,config:cfg},currentUser?.id||"")
+        : await saveCentralConfig(cfg,currentUser?.id||"");
+      if(currentEvent?.id){
+        currentEvent=result;
+        cfg=normalizeConfig(deepMerge(clone(DEFAULT_CONFIG),result.config||{}));
+      }else{
+        cfg=result.config;
+      }
       normalizeModules();
       render();
-      state.textContent=`✓ Salvat online • v${result.version}`;
+      state.textContent="✓ Salvat online"+(result.version?" • v"+result.version:"");
       state.classList.add("saved");
     }catch(error){
       console.error("Eroare salvare configurație:",error);
@@ -239,5 +301,31 @@
   $("importBtn").onclick=()=>$("importFile").click();
   $("importFile").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{cfg=deepMerge(clone(DEFAULT_CONFIG),JSON.parse(r.result));normalizeModules();render()}catch{alert("Fișier de configurare invalid.")}};r.readAsText(f)};
   function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")};function escAttr(v){return esc(v).replace(/'/g,"&#39;")}
-  initAdminConfig().catch(error=>{console.error(error);render();});
+  $("createEventBtn")?.addEventListener("click",async()=>{
+    try{
+      const result=await createEventCentral(currentEvent?.id||"",currentUser?.id||"");
+      events=await fetchEvents();
+      await selectEvent(result.id);
+    }catch(error){alert(error.message||"Evenimentul nu a putut fi creat.");}
+  });
+  $("activateEventBtn")?.addEventListener("click",async()=>{
+    if(!currentEvent?.id)return;
+    try{
+      await activateEventCentral(currentEvent.id,currentUser?.id||"");
+      events=await fetchEvents();
+      await selectEvent(currentEvent.id);
+    }catch(error){alert(error.message||"Evenimentul nu a putut fi activat.");}
+  });
+  $("archiveEventBtn")?.addEventListener("click",async()=>{
+    if(!currentEvent?.id)return;
+    try{
+      await archiveEventCentral(currentEvent.id,currentUser?.id||"");
+      events=await fetchEvents();
+      await selectEvent(currentEvent.id);
+    }catch(error){alert(error.message||"Evenimentul nu a putut fi arhivat.");}
+  });
+  $("previewEventBtn")?.addEventListener("click",()=>{
+    if(currentEvent?.id)window.open("index.html?previewEvent="+encodeURIComponent(currentEvent.id),"_blank","noopener");
+  });
+  loadEventList().catch(error=>{console.error(error);loadCentralConfig({bootstrapIfMissing:true}).then(()=>{normalizeModules();render();}).catch(()=>render());});
 })();
