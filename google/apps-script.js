@@ -1377,33 +1377,83 @@ function loginUser(ss, data) {
   var congregatie = cleanValue(getValue(data, ["congregatie", "congregație"]));
 
   if (!nume || !prenume || !congregatie) {
-    return jsonOutput({ success:false, error:"Completează toate datele." });
+    return jsonOutput({
+      success: false,
+      error: "Completează toate datele."
+    });
+  }
+
+  if (sheet.getLastRow() < 2) {
+    return jsonOutput({
+      success: false,
+      error: "Foaia Utilizatori nu conține utilizatori."
+    });
   }
 
   var rows = sheet.getDataRange().getValues();
+  var headers = rows[0].map(function(value) {
+    return normalizeLoginValue(value);
+  });
+
+  function findHeader(names, fallbackIndex) {
+    for (var i = 0; i < names.length; i++) {
+      var index = headers.indexOf(normalizeLoginValue(names[i]));
+      if (index !== -1) return index;
+    }
+    return fallbackIndex;
+  }
+
+  var idCol = findHeader(["ID", "Id", "id"], 0);
+  var numeCol = findHeader(["Nume", "Nume de familie", "Familie"], 1);
+  var prenumeCol = findHeader(["Prenume", "First name"], 2);
+  var congregatieCol = findHeader(["Congregație", "Congregatie", "Congregaţia", "Congregatia"], 3);
+  var activeCol = findHeader(["Activ", "Active"], 4);
+
   var nNume = normalizeLoginValue(nume);
   var nPrenume = normalizeLoginValue(prenume);
   var nCong = normalizeLoginValue(congregatie);
 
   for (var i = 1; i < rows.length; i++) {
-    var active = rows[i][4];
-    if (String(active || "DA").trim().toLowerCase() === "nu") continue;
-    if (normalizeLoginValue(rows[i][1]) === nNume &&
-        normalizeLoginValue(rows[i][2]) === nPrenume &&
-        normalizeLoginValue(rows[i][3]) === nCong) {
+    var active = String(rows[i][activeCol] || "DA").trim().toLowerCase();
+
+    if (active === "nu" || active === "no" || active === "false" || active === "0") {
+      continue;
+    }
+
+    var rowNume = normalizeLoginValue(rows[i][numeCol]);
+    var rowPrenume = normalizeLoginValue(rows[i][prenumeCol]);
+    var rowCong = normalizeLoginValue(rows[i][congregatieCol]);
+
+    if (
+      rowNume === nNume &&
+      rowPrenume === nPrenume &&
+      rowCong === nCong
+    ) {
+      var userId = String(rows[i][idCol] || "").trim();
+
+      if (!userId) {
+        return jsonOutput({
+          success: false,
+          error: "Utilizatorul există, dar nu are ID în coloana ID."
+        });
+      }
+
       return jsonOutput({
-        success:true,
-        user:{
-          id:String(rows[i][0]),
-          nume:String(rows[i][1]),
-          prenume:String(rows[i][2]),
-          congregatie:String(rows[i][3])
+        success: true,
+        user: {
+          id: userId,
+          nume: String(rows[i][numeCol] || "").trim(),
+          prenume: String(rows[i][prenumeCol] || "").trim(),
+          congregatie: String(rows[i][congregatieCol] || "").trim()
         }
       });
     }
   }
 
-  return jsonOutput({ success:false, error:"Datele introduse nu au fost găsite." });
+  return jsonOutput({
+    success: false,
+    error: "Datele introduse nu corespund unui utilizator activ din foaia Utilizatori."
+  });
 }
 
 function jsonOutput(obj) {
