@@ -1,5 +1,8 @@
 (async function(){
-  const activeEvent=await fetchActiveEventConfig().catch(()=>null);
+  const params=new URLSearchParams(window.location.search);
+  const previewId=params.get("previewEvent");
+  const previewEvent=previewId ? await fetchEvent(previewId).catch(()=>null) : null;
+  const activeEvent=previewEvent || await fetchActiveEventConfig().catch(()=>null);
   const cfg=activeEvent && activeEvent.config ? normalizeConfig(deepMerge(structuredClone(DEFAULT_CONFIG), activeEvent.config)) : await loadCentralConfig();
   startCentralConfigWatcher(60000);
   const app=document.getElementById("app");
