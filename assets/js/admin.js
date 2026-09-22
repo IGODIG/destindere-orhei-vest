@@ -318,13 +318,14 @@
   });
   $("archiveEventBtn")?.addEventListener("click",async()=>{
     if(!currentEvent?.id)return;
+    if(currentEvent.status==="ACTIV"){ alert("Evenimentul ACTIV trebuie înlocuit cu alt eveniment înainte de arhivare."); return; }
     try{
       await archiveEventCentral(currentEvent.id,currentUser?.id||"");
       events=await fetchEvents();
       await selectEvent(currentEvent.id);
     }catch(error){alert(error.message||"Evenimentul nu a putut fi arhivat.");}
   });
-  $("previewEventBtn")?.addEventListener("click",()=>{
+  $("previewEventBtn"))?.addEventListener("click",()=>{
     if(currentEvent?.id)window.open("index.html?previewEvent="+encodeURIComponent(currentEvent.id),"_blank","noopener");
   });
   loadEventList().catch(error=>{console.error(error);loadCentralConfig({bootstrapIfMissing:true}).then(()=>{normalizeModules();render();}).catch(()=>render());});
