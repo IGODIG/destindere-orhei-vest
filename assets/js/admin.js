@@ -51,19 +51,81 @@
   function renderEventManager(){
     const selector=$("eventSelector"), list=$("eventsList");
     if(selector){
-      selector.innerHTML=events.map(e=>"<option value=\""+escAttr(e.id)+"\">"+esc(e.name)+" • "+esc(e.status)+"</option>").join("");
+      selector.innerHTML=events.map(e=>"<option value=\""+escAttr(e.id)+"\">"+esc(e.name)+"</option>").join("");
       if(currentEvent) selector.value=currentEvent.id;
       selector.onchange=()=>selectEvent(selector.value).catch(err=>alert(err.message));
     }
+    const status=currentEvent?.status||currentEvent?.storedStatus||"PLANIFICAT";
     if(currentEvent){
-      val("eventStatus",currentEvent.storedStatus||currentEvent.status||"PLANIFICAT");
+      val("eventStatus",status);
       val("activeFrom",toLocalDateTime(currentEvent.activeFrom));
       val("activeUntil",toLocalDateTime(currentEvent.activeUntil));
     }
+    const statusBadge=$("eventStatusBadge");
+    if(statusBadge){statusBadge.textContent=status;statusBadge.dataset.status=status;}
+    const count=$("eventCount");
+    if(count) count.textContent=String(events.length);
     if(list){
-      list.innerHTML=events.map(e=>"<div class=\"event-manager-row\"><div><strong>"+esc(e.name)+"</strong><small>"+esc(e.date||"")+" "+esc(e.time||"")+" • "+esc(e.location||"")+"</small></div><span>"+e.status+"</span><button type=\"button\" data-event-open=\""+escAttr(e.id)+"\">👁 Vezi</button></div>").join("");
+      list.innerHTML=events.map(e=>{
+        const selected=currentEvent?.id===e.id;
+        const statusClass=escAttr(e.status||"PLANIFICAT");
+        const meta=[
+          e.date ? "📅 "+esc(e.date) : "",
+          e.time ? "🕐 "+esc(e.time) : "",
+          e.location ? "📍 "+esc(e.location) : ""
+        ].filter(Boolean).join("");
+        const activate=e.status==="PLANIFICAT" ? '<button type="button" class="row-activate" data-event-activate="'+escAttr(e.id)+'">🟢 Activează</button>' : "";
+        const remove=e.status!=="ACTIV" ? '<button type="button" class="row-delete" data-event-delete="'+escAttr(e.id)+'">🗑 Șterge</button>' : "";
+        return '<div class="event-manager-row'+(selected?" is-selected":"")+'">'+
+          '<div class="event-manager-main"><div class="event-manager-title"><strong>'+esc(e.name||"Eveniment fără nume")+'</strong></div>'+
+          '<div class="event-manager-meta">'+meta+'</div></div>'+
+          '<span class="event-row-status '+statusClass+'">'+esc(e.status||"PLANIFICAT")+'</span>'+
+          '<div class="event-manager-actions"><button type="button" data-event-open="'+escAttr(e.id)+'">👁 Vezi</button>'+activate+remove+'</div>'+
+        '</div>';
+      }).join("");
       list.querySelectorAll("[data-event-open]").forEach(btn=>btn.onclick=()=>selectEvent(btn.dataset.eventOpen).catch(err=>alert(err.message)));
+      list.querySelectorAll("[data-event-activate]").forEach(btn=>btn.onclick=async()=>{
+        try{
+          await selectEvent(btn.dataset.eventActivate);
+          const activeFrom=$("activeFrom")?.value||"";
+          if(!activeFrom){alert("Completează „Activ din” înainte de activare.");return;}
+          const activeUntil=$("activeUntil")?.value||"";
+          if(activeUntil && new Date(activeUntil)<=new Date(activeFrom)){alert("„Activ până la” trebuie să fie după „Activ din”.");return;}
+          await activateEventCentral(currentEvent.id,fromLocalDateTime(activeFrom),fromLocalDateTime(activeUntil),currentUser?.id||"");
+          events=await fetchEvents();
+          await selectEvent(currentEvent.id);
+        }catch(error){alert(error.message||"Evenimentul nu a putut fi activat.");}
+      });
+      list.querySelectorAll("[data-event-delete]").forEach(btn=>btn.onclick=()=>deleteEventById(btn.dataset.eventDelete));
     }
+    const activateBtn=$("activateEventBtn");
+    if(activateBtn){
+      const canActivate=!!currentEvent?.id && currentEvent.status==="PLANIFICAT";
+      activateBtn.disabled=!canActivate;
+      activateBtn.title=canActivate?"Activează evenimentul selectat":"Doar evenimentele PLANIFICAT pot deveni ACTIV";
+    }
+    const deleteBtn=$("deleteEventBtn");
+    if(deleteBtn){
+      const canDelete=!!currentEvent?.id && currentEvent.status!=="ACTIV";
+      deleteBtn.disabled=!canDelete;
+      deleteBtn.title=canDelete?"Șterge definitiv evenimentul":"Un eveniment ACTIV trebuie mai întâi înlocuit";
+    }
+    const previewBtn=$("previewEventBtn");
+    if(previewBtn) previewBtn.disabled=!currentEvent?.id;
+  }
+
+  async function deleteEventById(eventId){
+    const event=events.find(e=>e.id===eventId)||currentEvent;
+    if(!event)return;
+    if(event.status==="ACTIV"){alert("Evenimentul ACTIV nu poate fi șters. Activează mai întâi alt eveniment.");return;}
+    if(!confirm("Ștergi definitiv „"+(event.name||"acest eveniment")+"” și toate datele lui? Această acțiune nu poate fi anulată."))return;
+    try{
+      await deleteEventCentral(event.id,currentUser?.id||"");
+      events=await fetchEvents();
+      const next=events.find(e=>e.status==="ACTIV")||events[0];
+      if(next) await selectEvent(next.id);
+      else{currentEvent=null;renderEventManager();render();}
+    }catch(error){alert(error.message||"Evenimentul nu a putut fi șters.");}
   }
 
   async function loadEventList(){
@@ -328,31 +390,10 @@
       await selectEvent(currentEvent.id);
     }catch(error){alert(error.message||"Evenimentul nu a putut fi activat.");}
   });
-  $("archiveEventBtn")?.addEventListener("click",async()=>{
-    if(!currentEvent?.id)return;
-    if(currentEvent.status==="ACTIV"){alert("Evenimentul ACTIV trebuie înlocuit cu alt eveniment înainte de arhivare.");return;}
-    try{
-      await archiveEventCentral(currentEvent.id,currentUser?.id||"");
-      events=await fetchEvents();
-      await selectEvent(currentEvent.id);
-    }catch(error){alert(error.message||"Evenimentul nu a putut fi arhivat.");}
-  });
   $("previewEventBtn")?.addEventListener("click",()=>{
     if(currentEvent?.id)window.open("index.html?previewEvent="+encodeURIComponent(currentEvent.id),"_blank","noopener");
   });
-  const deleteBtn=document.createElement("button");
-  deleteBtn.type="button";deleteBtn.className="secondary";deleteBtn.textContent="🗑 Șterge evenimentul";
-  $("eventManager")?.querySelector(".bottom-actions")?.appendChild(deleteBtn);
-  deleteBtn.onclick=async()=>{
-    if(!currentEvent?.id)return;
-    if(currentEvent.status==="ACTIV"){alert("Evenimentul ACTIV nu poate fi șters. Activează mai întâi alt eveniment.");return;}
-    if(!confirm("Ștergi definitiv acest eveniment și toate datele lui? Această acțiune nu poate fi anulată."))return;
-    try{
-      await deleteEventCentral(currentEvent.id,currentUser?.id||"");
-      events=await fetchEvents();
-      if(events.length){await selectEvent((events.find(e=>e.status==="ACTIV")||events[0]).id);}
-      else{currentEvent=null;renderEventManager();render();}
-    }catch(error){alert(error.message||"Evenimentul nu a putut fi șters.");}
-  };
+  $("deleteEventBtn")?.addEventListener("click",()=>{if(currentEvent?.id)deleteEventById(currentEvent.id);});
+
   loadEventList().catch(error=>{console.error(error);loadCentralConfig({bootstrapIfMissing:true}).then(()=>{normalizeModules();render();}).catch(()=>render());});
 })();
