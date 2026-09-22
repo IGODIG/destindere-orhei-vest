@@ -1024,6 +1024,28 @@ function validateActivationDates(activeFrom, activeUntil) {
   }
 }
 
+function formatEventDateV2(value) {
+  if (value === null || value === undefined || value === "") return "";
+  if (Object.prototype.toString.call(value) === "[object Date]" && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, Session.getScriptTimeZone(), "yyyy-MM-dd");
+  }
+  var text = String(value).trim();
+  if (!text) return "";
+  var iso = text.match(/^(\d{4}-\d{2}-\d{2})/);
+  return iso ? iso[1] : text;
+}
+
+function formatEventTimeV2(value) {
+  if (value === null || value === undefined || value === "") return "";
+  if (Object.prototype.toString.call(value) === "[object Date]" && !isNaN(value.getTime())) {
+    return Utilities.formatDate(value, Session.getScriptTimeZone(), "HH:mm");
+  }
+  var text = String(value).trim();
+  if (!text) return "";
+  var match = text.match(/(\d{1,2}):(\d{2})/);
+  return match ? String(match[1]).padStart(2,"0")+":"+match[2] : text;
+}
+
 function eventRecordFromRowV2(row) {
   var activeFrom = row[7] ? parseOptionalEventDateTime(row[7]) : null;
   var activeUntil = row[8] ? parseOptionalEventDateTime(row[8]) : null;
@@ -1031,8 +1053,8 @@ function eventRecordFromRowV2(row) {
     id: String(row[0] || "").trim(),
     name: String(row[1] || "").trim(),
     congregation: String(row[2] || "").trim(),
-    date: String(row[3] || "").trim(),
-    time: String(row[4] || "").trim(),
+    date: formatEventDateV2(row[3]),
+    time: formatEventTimeV2(row[4]),
     location: String(row[5] || "").trim(),
     status: normalizeEventStatus(row[6]),
     storedStatus: normalizeEventStatus(row[6]),
