@@ -952,9 +952,9 @@ function getCentralConfigResponse(ss) {
   });
 }
 
-function isActiveAdmin(ss, displayName) {
-  var name = String(displayName || "").trim();
-  if (!name) return false;
+function isActiveAdmin(ss, userId) {
+  var id = String(userId || "").trim();
+  if (!id) return false;
 
   var sheet = ss.getSheetByName("Utilizatori");
   if (!sheet || sheet.getLastRow() < 2) return false;
@@ -962,12 +962,10 @@ function isActiveAdmin(ss, displayName) {
   var values = sheet.getDataRange().getValues();
 
   for (var i = 1; i < values.length; i++) {
-    var prenume = String(values[i][2] || "").trim();
-    var nume = String(values[i][1] || "").trim();
+    var rowId = String(values[i][0] || "").trim();
     var active = String(values[i][4] || "DA").trim().toLowerCase();
-    var fullName = (prenume + " " + nume).trim();
 
-    if (normalizeLoginValue(fullName) === normalizeLoginValue(name) && active !== "nu") {
+    if (rowId === id && active !== "nu") {
       return true;
     }
   }
@@ -992,7 +990,7 @@ function saveCentralConfig(ss, data) {
 
     var updatedBy = cleanValue(getValue(data, ["updatedBy"]));
     if (!isActiveAdmin(ss, updatedBy)) {
-      throw new Error("Utilizatorul nu este autorizat să salveze configurația.");
+      throw new Error("Utilizatorul nu este autorizat să salveze configurația (ID invalid sau inactiv).");
     }
 
     delete config.apiUrl;
