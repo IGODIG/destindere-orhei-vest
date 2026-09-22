@@ -890,11 +890,6 @@ async function saveEventCentral(event, updatedBy) {
   const formData = new URLSearchParams();
   formData.append("action", "saveEvent");
   formData.append("eventId", event.id || payload.event.eventId || "");
-  formData.append("name", payload.event.name || "");
-  formData.append("congregation", payload.event.congregation || "");
-  formData.append("date", payload.event.date || "");
-  formData.append("time", payload.event.time || "00:00");
-  formData.append("location", payload.event.location || "");
   formData.append("status", event.status || event.storedStatus || "PLANIFICAT");
   formData.append("activeFrom", event.activeFrom || "");
   formData.append("activeUntil", event.activeUntil || "");
@@ -917,10 +912,12 @@ async function createEventCentral(sourceEventId, updatedBy) {
   return data.event;
 }
 
-async function activateEventCentral(eventId, updatedBy) {
+async function activateEventCentral(eventId, activeFrom, activeUntil, updatedBy) {
   const formData = new URLSearchParams();
   formData.append("action", "activateEvent");
   formData.append("eventId", eventId || "");
+  formData.append("activeFrom", activeFrom || "");
+  formData.append("activeUntil", activeUntil || "");
   formData.append("updatedBy", updatedBy || "");
   const response = await fetch(DEFAULT_CONFIG.apiUrl, { method: "POST", body: formData });
   const data = await response.json();
@@ -937,6 +934,17 @@ async function archiveEventCentral(eventId, updatedBy) {
   const data = await response.json();
   if (!data.success) throw new Error(data.message || "Evenimentul nu a putut fi arhivat.");
   return data.event;
+}
+
+async function deleteEventCentral(eventId, updatedBy) {
+  const formData = new URLSearchParams();
+  formData.append("action", "deleteEvent");
+  formData.append("eventId", eventId || "");
+  formData.append("updatedBy", updatedBy || "");
+  const response = await fetch(DEFAULT_CONFIG.apiUrl, { method: "POST", body: formData });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message || "Evenimentul nu a putut fi șters.");
+  return data;
 }
 
 /* ==========================================================
