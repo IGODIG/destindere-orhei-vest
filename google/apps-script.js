@@ -30,6 +30,11 @@ function doGet(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     CONFIG_PRODUSE = getProductConfig(ss);
 
+    // CONFIGURAȚIE CENTRALĂ V1.8
+    if (e && e.parameter && e.parameter.type === "config") {
+      return getCentralConfigResponse(ss);
+    }
+
     // Returnează configurația produselor pentru site/admin.
     // ?type=produse
     if (e && e.parameter && e.parameter.type === "produse") {
@@ -354,6 +359,10 @@ function doPost(e) {
     // IMPORTANT:
     // Aici NU cerem numele invitatului.
     // ======================================================
+
+    if (action === "saveConfig") {
+      return saveCentralConfig(ss, data);
+    }
 
     if (action === "login") {
       return loginUser(ss, data);
@@ -880,6 +889,140 @@ function uploadMemory(data) {
 }
 
 
+
+
+/* ==========================================================
+   CONFIGURAȚIE CENTRALĂ V1.8
+========================================================== */
+
+function ensureConfigSheet(ss) {
+  var sheet = ss.getSheetByName("Configurare");
+  if (!sheet) {
+    sheet = ss.insertSheet("Configurare");
+    sheet.getRange(1, 1, 1, 5).setValues([[
+      "ID", "ConfigJSON", "Version", "UpdatedAt", "UpdatedBy"
+    ]]);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+function getCentralConfigRecord(ss) {
+  var sheet = ensureConfigSheet(ss);
+  if (sheet.getLastRow() < 2) return null;
+
+  var values = sheet.getRange(2, 1, 1, 5).getValues()[0];
+  if (!values[1]) return null;
+
+  var config;
+  try {
+    config = JSON.parse(String(values[1]));
+  } catch (error) {
+    throw new Error("ConfigJSON din foaia 'Configurare' nu este JSON valid.");
+  }
+
+  return {
+    config: config,
+    version: Number(values[2]) || 1,
+    updatedAt: values[3] ? new Date(values[3]).toISOString() : "",
+    updatedBy: String(values[4] || "")
+  };
+}
+
+function getCentralConfigResponse(ss) {
+  var record = getCentralConfigRecord(ss);
+  if (!record) {
+    return jsonOutput({
+      success: true,
+      configured: false,
+      config: null,
+      version: 0,
+      updatedAt: "",
+      updatedBy: ""
+    });
+  }
+
+  return jsonOutput({
+    success: true,
+    configured: true,
+    config: record.config,
+    version: record.version,
+    updatedAt: record.updatedAt,
+    updatedBy: record.updatedBy
+  });
+}
+
+function isActiveAdmin(ss, displayName) {
+  var name = String(displayName || "").trim();
+  if (!name) return false;
+
+  var sheet = ss.getSheetByName("Utilizatori");
+  if (!sheet || sheet.getLastRow() < 2) return false;
+
+  var values = sheet.getDataRange().getValues();
+
+  for (var i = 1; i < values.length; i++) {
+    var prenume = String(values[i][2] || "").trim();
+    var nume = String(values[i][1] || "").trim();
+    var active = String(values[i][4] || "DA").trim().toLowerCase();
+    var fullName = (prenume + " " + nume).trim();
+
+    if (normalizeLoginValue(fullName) === normalizeLoginValue(name) && active !== "nu") {
+      return true;
+    }
+  }
+  return false;
+}
+
+function saveCentralConfig(ss, data) {
+  try {
+    var raw = getValue(data, ["config"]);
+    if (!raw) throw new Error("Configurația lipsește.");
+
+    var config;
+    try {
+      config = typeof raw === "string" ? JSON.parse(raw) : raw;
+    } catch (error) {
+      throw new Error("Configurația trimisă nu este JSON valid.");
+    }
+
+    if (!config || typeof config !== "object") {
+      throw new Error("Configurația este invalidă.");
+    }
+
+    var updatedBy = cleanValue(getValue(data, ["updatedBy"]));
+    if (!isActiveAdmin(ss, updatedBy)) {
+      throw new Error("Utilizatorul nu este autorizat să salveze configurația.");
+    }
+
+    delete config.apiUrl;
+
+    var sheet = ensureConfigSheet(ss);
+    var record = getCentralConfigRecord(ss);
+    var nextVersion = record ? Number(record.version || 0) + 1 : 1;
+    var now = new Date();
+
+    sheet.getRange(2, 1, 1, 5).setValues([[
+      "site", JSON.stringify(config), nextVersion, now, updatedBy
+    ]]);
+
+    SpreadsheetApp.flush();
+
+    return jsonOutput({
+      success: true,
+      configured: true,
+      config: config,
+      version: nextVersion,
+      updatedAt: now.toISOString(),
+      updatedBy: updatedBy
+    });
+  } catch (error) {
+    return jsonOutput({
+      success: false,
+      message: error.toString()
+    });
+  }
+}
 
 // ==========================================================
 // CONFIGURAȚIA PRODUSELOR
