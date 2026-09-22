@@ -196,8 +196,11 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   }
 
-  // Încărcăm datele
-  loadData();
+  // Încărcăm mai întâi configurația centrală, apoi datele operaționale.
+  loadCentralConfig().then(loadData).catch(function(error){
+    console.error("Config central indisponibil:", error);
+    loadData();
+  });
 
   // ==========================================
   // TRIMITERE FORMULAR

@@ -24,8 +24,14 @@
     window.location.replace("login.html");
   });
   let cfg=clone(DEFAULT_CONFIG);
-  try{const saved=localStorage.getItem("destindereConfig");if(saved)cfg=deepMerge(clone(DEFAULT_CONFIG),JSON.parse(saved));}catch(e){}
   cfg=normalizeConfig(cfg);
+
+  async function initAdminConfig(){
+    cfg = await loadCentralConfig({ bootstrapIfMissing: true });
+    normalizeModules();
+    applyFoodAutoState();
+    render();
+  }
 
   const MODULE_IDS=["countdown","memories","features","gallery","participation","stats","food","location"];
   const META={
@@ -188,11 +194,50 @@
     cfg.food.products.push({id,name:"Produs nou",required:1,unit:"bucăți",icon:"🎁",enabled:true});
     renderFood();
   };
-  $("saveBtn").onclick=()=>{collect();localStorage.setItem("destindereConfig",JSON.stringify(cfg));$("saveState").textContent="✓ Salvat în acest browser";$("saveState").classList.add("saved");setTimeout(()=>{$("saveState").textContent="Configurație locală";$("saveState").classList.remove("saved")},2200)};
-  $("resetBtn").onclick=()=>{if(confirm("Revii la configurația implicită?")){localStorage.removeItem("destindereConfig");cfg=normalizeConfig(clone(DEFAULT_CONFIG));normalizeModules();render()}};
+  $("saveBtn").onclick=async ()=>{
+    collect();
+    const button=$("saveBtn");
+    const state=$("saveState");
+    button.disabled=true;
+    state.textContent="Se salvează online...";
+    state.classList.remove("saved");
+    try{
+      const result=await saveCentralConfig(cfg, currentUser ? `${currentUser.prenume||""} ${currentUser.nume||""}`.trim() : "Admin");
+      cfg=result.config;
+      normalizeModules();
+      render();
+      state.textContent=`✓ Salvat online • v${result.version}`;
+      state.classList.add("saved");
+    }catch(error){
+      console.error("Eroare salvare configurație:",error);
+      state.textContent="❌ Nu s-a putut salva online";
+      state.classList.remove("saved");
+      alert("Configurația nu a putut fi salvată online. Verifică conexiunea și Google Apps Script.");
+    }finally{
+      button.disabled=false;
+      setTimeout(()=>{state.textContent="Configurație online";state.classList.remove("saved")},3000);
+    }
+  };
+  $("resetBtn").onclick=async ()=>{
+    if(!confirm("Revii la configurația implicită și o salvezi online?"))return;
+    cfg=normalizeConfig(clone(DEFAULT_CONFIG));
+    normalizeModules();
+    collect();
+    try{
+      const result=await saveCentralConfig(cfg, currentUser ? `${currentUser.prenume||""} ${currentUser.nume||""}`.trim() : "Admin");
+      cfg=result.config;
+      normalizeModules();
+      render();
+      $("saveState").textContent=`✓ Configurație implicită salvată online • v${result.version}`;
+      $("saveState").classList.add("saved");
+    }catch(error){
+      console.error(error);
+      alert("Configurația implicită nu a putut fi salvată online.");
+    }
+  };
   $("exportBtn").onclick=()=>{collect();const blob=new Blob([JSON.stringify(cfg,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="destindere-config.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
   $("importBtn").onclick=()=>$("importFile").click();
   $("importFile").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{cfg=deepMerge(clone(DEFAULT_CONFIG),JSON.parse(r.result));normalizeModules();render()}catch{alert("Fișier de configurare invalid.")}};r.readAsText(f)};
   function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;")};function escAttr(v){return esc(v).replace(/'/g,"&#39;")}
-  render();
+  initAdminConfig().catch(error=>{console.error(error);render();});
 })();

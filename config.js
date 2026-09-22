@@ -657,9 +657,210 @@ function deepMerge(
 }
 
 
+
+/* ==========================================================
+   CONFIGURAȚIE CENTRALĂ - GOOGLE SHEETS
+   V1.8
+========================================================== */
+
+let centralConfigPromise = null;
+
+function getLocalCachedConfig() {
+  try {
+    const saved = localStorage.getItem("destindereConfig");
+    if (saved) {
+      const config = normalizeConfig(
+        deepMerge(structuredClone(DEFAULT_CONFIG), JSON.parse(saved))
+      );
+      config.apiUrl = DEFAULT_CONFIG.apiUrl;
+      return config;
+    }
+  } catch (error) {
+    console.warn("Cache-ul local nu a putut fi încărcat.", error);
+  }
+  return normalizeConfig(structuredClone(DEFAULT_CONFIG));
+}
+
+async function fetchCentralConfig() {
+  const url = `${DEFAULT_CONFIG.apiUrl}?type=config&_=${Date.now()}`;
+  const response = await fetch(url, { cache: "no-store" });
+
+  if (!response.ok) {
+    throw new Error(`Config central HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  if (!data || data.success !== true) {
+    throw new Error(data?.message || "Configurația centrală nu este disponibilă.");
+  }
+
+  return data;
+}
+
+async function saveCentralConfig(config, updatedBy) {
+  const payload = normalizeConfig(
+    deepMerge(structuredClone(DEFAULT_CONFIG), config || {})
+  );
+
+  payload.apiUrl = DEFAULT_CONFIG.apiUrl;
+
+  const formData = new URLSearchParams();
+  formData.append("action", "saveConfig");
+  formData.append("config", JSON.stringify(payload));
+  formData.append("updatedBy", updatedBy || "");
+
+  const response = await fetch(DEFAULT_CONFIG.apiUrl, {
+    method: "POST",
+    body: formData
+  });
+
+  if (!response.ok) {
+    throw new Error(`Salvarea configurației a eșuat: HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  if (!data || data.success !== true) {
+    throw new Error(data?.message || "Google Sheets nu a acceptat configurația.");
+  }
+
+  const savedConfig = normalizeConfig(
+    deepMerge(structuredClone(DEFAULT_CONFIG), data.config || payload)
+  );
+
+  savedConfig.apiUrl = DEFAULT_CONFIG.apiUrl;
+
+  try {
+    localStorage.setItem("destindereConfig", JSON.stringify(savedConfig));
+  } catch (error) {
+    console.warn("Configurația a fost salvată central, dar cache-ul local nu a putut fi actualizat.", error);
+  }
+
+  window.CONFIG = savedConfig;
+  window.CONFIG_VERSION = Number(data.version || 0);
+
+  return {
+    config: savedConfig,
+    version: window.CONFIG_VERSION,
+    updatedAt: data.updatedAt || "",
+    updatedBy: data.updatedBy || ""
+  };
+}
+
+async function loadCentralConfig(options = {}) {
+  if (centralConfigPromise && !options.force) {
+    return centralConfigPromise;
+  }
+
+  centralConfigPromise = (async () => {
+    const fallback = getLocalCachedConfig();
+
+    try {
+      const data = await fetchCentralConfig();
+
+      if (data.config && typeof data.config === "object") {
+        const remote = normalizeConfig(
+          deepMerge(structuredClone(DEFAULT_CONFIG), data.config)
+        );
+
+        remote.apiUrl = DEFAULT_CONFIG.apiUrl;
+
+        try {
+          localStorage.setItem("destindereConfig", JSON.stringify(remote));
+        } catch (error) {
+          console.warn("Cache-ul local nu a putut fi actualizat.", error);
+        }
+
+        window.CONFIG = remote;
+        window.CONFIG_VERSION = Number(data.version || 0);
+        window.CONFIG_UPDATED_AT = data.updatedAt || "";
+        window.CONFIG_UPDATED_BY = data.updatedBy || "";
+
+        return remote;
+      }
+
+      if (options.bootstrapIfMissing) {
+        const user = (() => {
+          try {
+            return JSON.parse(localStorage.getItem("destindereUser") || "null");
+          } catch {
+            return null;
+          }
+        })();
+
+        const saved = await saveCentralConfig(
+          fallback,
+          user ? `${user.prenume || ""} ${user.nume || ""}`.trim() : "Admin"
+        );
+
+        return saved.config;
+      }
+
+      window.CONFIG = fallback;
+      window.CONFIG_VERSION = 0;
+      return fallback;
+
+    } catch (error) {
+      console.warn(
+        "Configurația centrală nu este disponibilă. Se folosește cache-ul local.",
+        error
+      );
+
+      window.CONFIG = fallback;
+      window.CONFIG_VERSION = 0;
+      return fallback;
+    }
+  })();
+
+  try {
+    return await centralConfigPromise;
+  } catch (error) {
+    centralConfigPromise = null;
+    throw error;
+  }
+}
+
+async function refreshCentralConfigIfChanged() {
+  try {
+    const data = await fetchCentralConfig();
+    const remoteVersion = Number(data.version || 0);
+    const currentVersion = Number(window.CONFIG_VERSION || 0);
+
+    if (
+      data.config &&
+      remoteVersion > 0 &&
+      currentVersion > 0 &&
+      remoteVersion !== currentVersion
+    ) {
+      return true;
+    }
+  } catch (error) {
+    console.warn("Verificarea configurației centrale a eșuat.", error);
+  }
+
+  return false;
+}
+
+function startCentralConfigWatcher(intervalMs = 60000) {
+  if (window.__destindereConfigWatcher) {
+    clearInterval(window.__destindereConfigWatcher);
+  }
+
+  window.__destindereConfigWatcher = setInterval(async () => {
+    const changed = await refreshCentralConfigIfChanged();
+
+    if (changed) {
+      window.location.reload();
+    }
+  }, intervalMs);
+}
+
 /* ==========================================================
    CONFIG GLOBAL
 ========================================================== */
 
-window.CONFIG =
-  getSiteConfig();
+window.CONFIG = getSiteConfig();
+window.CONFIG_VERSION = 0;
+window.CONFIG_UPDATED_AT = "";
+window.CONFIG_UPDATED_BY = "";
