@@ -1,5 +1,6 @@
-(function(){
-  const cfg=CONFIG;
+(async function(){
+  const cfg=await loadCentralConfig();
+  startCentralConfigWatcher(60000);
   const app=document.getElementById("app");
   const nav=document.getElementById("mainNav");
   const esc=v=>String(v??"").replace(/[&<>\"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
