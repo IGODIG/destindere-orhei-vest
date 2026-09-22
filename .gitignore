@@ -1,0 +1,36 @@
+# System
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Local files
+*.local
+*.local.json
+
+# Logs / temporary
+*.log
+*.tmp
+*.temp
+
+# Build / cache
+dist/
+build/
+.cache/
+coverage/
+
+# Archives / backups
+*.zip
+*.bak
+*.backup
