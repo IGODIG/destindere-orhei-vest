@@ -41,17 +41,29 @@
           </div>
           <span class="section-badge">Activ / Planificat / Arhivat</span>
         </div>
-        <div class="grid two">
-          <label class="wide">Eveniment<select id="eventSelector"></select></label>
-          <label>Status<input id="eventStatus" readonly /></label>
+        <div class="event-control-grid">
+          <label class="event-select-field wide">Eveniment<select id="eventSelector"></select></label>
+          <div class="event-status-card">
+            <span class="field-label">Status</span>
+            <span id="eventStatusBadge" class="event-status-badge">PLANIFICAT</span>
+            <input id="eventStatus" type="hidden" />
+          </div>
           <label>Activ din<input id="activeFrom" type="datetime-local"></label>
           <label>Activ până la<input id="activeUntil" type="datetime-local"></label>
         </div>
+        <div class="event-list-heading">
+          <div>
+            <strong>Evenimente salvate</strong>
+            <span>Fiecare eveniment are configurația și datele lui.</span>
+          </div>
+          <span id="eventCount" class="event-count">0</span>
+        </div>
         <div id="eventsList" class="event-manager-list"></div>
-        <div class="bottom-actions">
+        <div class="bottom-actions event-actions">
           <button class="secondary" id="createEventBtn" type="button">＋ Creează eveniment</button>
           <button class="secondary" id="activateEventBtn" type="button">🟢 Setează ACTIV</button>
           <button class="secondary" id="previewEventBtn" type="button">👁 Vezi evenimentul</button>
+          <button class="danger-btn" id="deleteEventBtn" type="button">🗑 Șterge evenimentul</button>
         </div>
       </section>
 
