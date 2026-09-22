@@ -33,6 +33,33 @@
     </header>
 
     <main class="admin-wrap">
+      <section class="panel event-panel" id="eventManager">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">GESTIONARE EVENIMENTE</span>
+            <h1>Evenimente</h1>
+          </div>
+          <span class="section-badge">Activ / Planificat / Arhivat</span>
+        </div>
+        <div class="grid two">
+          <label class="wide">Eveniment<select id="eventSelector"></select></label>
+          <label>Status<select id="eventStatus">
+            <option value="ACTIV">ACTIV</option>
+            <option value="PLANIFICAT">PLANIFICAT</option>
+            <option value="ARHIVAT">ARHIVAT</option>
+          </select></label>
+          <label>Activ din<input id="activeFrom" type="datetime-local"></label>
+          <label>Activ până la<input id="activeUntil" type="datetime-local"></label>
+        </div>
+        <div id="eventsList" class="event-manager-list"></div>
+        <div class="bottom-actions">
+          <button class="secondary" id="createEventBtn" type="button">＋ Creează eveniment</button>
+          <button class="secondary" id="activateEventBtn" type="button">🟢 Setează ACTIV</button>
+          <button class="secondary" id="archiveEventBtn" type="button">⚫ Arhivează</button>
+          <button class="secondary" id="previewEventBtn" type="button">👁 Vezi evenimentul</button>
+        </div>
+      </section>
+
       <section class="panel event-panel">
         <div class="section-heading">
           <div>
