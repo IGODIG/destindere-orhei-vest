@@ -202,7 +202,7 @@
     state.textContent="Se salvează online...";
     state.classList.remove("saved");
     try{
-      const result=await saveCentralConfig(cfg, currentUser ? `${currentUser.prenume||""} ${currentUser.nume||""}`.trim() : "Admin");
+      const result=await saveCentralConfig(cfg, currentUser?.id || "");
       cfg=result.config;
       normalizeModules();
       render();
@@ -212,7 +212,7 @@
       console.error("Eroare salvare configurație:",error);
       state.textContent="❌ Nu s-a putut salva online";
       state.classList.remove("saved");
-      alert("Configurația nu a putut fi salvată online. Verifică conexiunea și Google Apps Script.");
+      alert(`Configurația nu a putut fi salvată online. ${error?.message || "Verifică conexiunea și Google Apps Script."}`);
     }finally{
       button.disabled=false;
       setTimeout(()=>{state.textContent="Configurație online";state.classList.remove("saved")},3000);
@@ -224,7 +224,7 @@
     normalizeModules();
     collect();
     try{
-      const result=await saveCentralConfig(cfg, currentUser ? `${currentUser.prenume||""} ${currentUser.nume||""}`.trim() : "Admin");
+      const result=await saveCentralConfig(cfg, currentUser?.id || "");
       cfg=result.config;
       normalizeModules();
       render();
