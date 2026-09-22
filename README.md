@@ -1,6 +1,6 @@
-# Destindere Orhei-Vest – V14
+# Destindere Orhei-Vest – V1.7
 
-V14 păstrează baza V11 și adaugă: redenumirea fiecărui modul (același nume este folosit și în Header), comportament configurabil după începerea evenimentului pentru Countdown/Date/Participare, sincronizarea statusului Admin cu starea efectivă, login DESTINDERI JW MOLDOVA verificat în Google Sheets și sesiune locală.
+V1.7 păstrează și adaugă: redenumirea fiecărui modul (același nume este folosit și în Header), comportament configurabil după începerea evenimentului pentru Countdown/Date/Participare, sincronizarea statusului Admin cu starea efectivă, login DESTINDERI JW MOLDOVA verificat în Google Sheets și sesiune locală.
 
 ## Login / Google Sheets
 
