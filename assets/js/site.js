@@ -1,5 +1,6 @@
 (async function(){
-  const cfg=await loadCentralConfig();
+  const activeEvent=await fetchActiveEventConfig().catch(()=>null);
+  const cfg=activeEvent && activeEvent.config ? normalizeConfig(deepMerge(structuredClone(DEFAULT_CONFIG), activeEvent.config)) : await loadCentralConfig();
   startCentralConfigWatcher(60000);
   const app=document.getElementById("app");
   const nav=document.getElementById("mainNav");
