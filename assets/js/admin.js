@@ -310,23 +310,41 @@
   });
   $("activateEventBtn")?.addEventListener("click",async()=>{
     if(!currentEvent?.id)return;
+    const activeFrom=$("activeFrom")?.value||"";
+    const activeUntil=$("activeUntil")?.value||"";
+    if(!activeFrom){alert("Completează „Activ din” înainte de activare.");return;}
+    if(activeUntil && new Date(activeUntil)<=new Date(activeFrom)){alert("„Activ până la” trebuie să fie după „Activ din”.");return;}
     try{
-      await activateEventCentral(currentEvent.id,currentUser?.id||"");
+      await activateEventCentral(currentEvent.id,fromLocalDateTime(activeFrom),fromLocalDateTime(activeUntil),currentUser?.id||"");
       events=await fetchEvents();
       await selectEvent(currentEvent.id);
     }catch(error){alert(error.message||"Evenimentul nu a putut fi activat.");}
   });
   $("archiveEventBtn")?.addEventListener("click",async()=>{
     if(!currentEvent?.id)return;
-    if(currentEvent.status==="ACTIV"){ alert("Evenimentul ACTIV trebuie înlocuit cu alt eveniment înainte de arhivare."); return; }
+    if(currentEvent.status==="ACTIV"){alert("Evenimentul ACTIV trebuie înlocuit cu alt eveniment înainte de arhivare.");return;}
     try{
       await archiveEventCentral(currentEvent.id,currentUser?.id||"");
       events=await fetchEvents();
       await selectEvent(currentEvent.id);
     }catch(error){alert(error.message||"Evenimentul nu a putut fi arhivat.");}
   });
-  $("previewEventBtn"))?.addEventListener("click",()=>{
+  $("previewEventBtn")?.addEventListener("click",()=>{
     if(currentEvent?.id)window.open("index.html?previewEvent="+encodeURIComponent(currentEvent.id),"_blank","noopener");
   });
+  const deleteBtn=document.createElement("button");
+  deleteBtn.type="button";deleteBtn.className="secondary";deleteBtn.textContent="🗑 Șterge evenimentul";
+  $("eventManager")?.querySelector(".bottom-actions")?.appendChild(deleteBtn);
+  deleteBtn.onclick=async()=>{
+    if(!currentEvent?.id)return;
+    if(currentEvent.status==="ACTIV"){alert("Evenimentul ACTIV nu poate fi șters. Activează mai întâi alt eveniment.");return;}
+    if(!confirm("Ștergi definitiv acest eveniment și toate datele lui? Această acțiune nu poate fi anulată."))return;
+    try{
+      await deleteEventCentral(currentEvent.id,currentUser?.id||"");
+      events=await fetchEvents();
+      if(events.length){await selectEvent((events.find(e=>e.status==="ACTIV")||events[0]).id);}
+      else{currentEvent=null;renderEventManager();render();}
+    }catch(error){alert(error.message||"Evenimentul nu a putut fi șters.");}
+  };
   loadEventList().catch(error=>{console.error(error);loadCentralConfig({bootstrapIfMissing:true}).then(()=>{normalizeModules();render();}).catch(()=>render());});
 })();
