@@ -35,6 +35,21 @@ function doGet(e) {
       return getCentralConfigResponse(ss);
     }
 
+    // ======================================================
+    // EVENIMENTE
+    // ======================================================
+    if (e && e.parameter && e.parameter.type === "events") {
+      return getEventsResponse(ss);
+    }
+
+    if (e && e.parameter && e.parameter.type === "event") {
+      return getEventResponse(ss, e.parameter.eventId || "");
+    }
+
+    if (e && e.parameter && e.parameter.type === "activeEvent") {
+      return getActiveEventResponse(ss);
+    }
+
     // Returnează configurația produselor pentru site/admin.
     // ?type=produse
     if (e && e.parameter && e.parameter.type === "produse") {
@@ -363,6 +378,14 @@ function doPost(e) {
     if (action === "saveConfig") {
       return saveCentralConfig(ss, data);
     }
+
+    // ======================================================
+    // EVENIMENTE
+    // ======================================================
+    if (action === "saveEvent") return saveEvent(ss, data);
+    if (action === "createEvent") return createEvent(ss, data);
+    if (action === "activateEvent") return activateEvent(ss, data);
+    if (action === "archiveEvent") return archiveEvent(ss, data);
 
     if (action === "login") {
       return loginUser(ss, data);
@@ -889,6 +912,258 @@ function uploadMemory(data) {
 }
 
 
+
+
+/* ==========================================================
+   EVENIMENTE - MULTI-EVENT
+   Păstrează configurația actuală și adaugă doar un strat
+   de administrare pentru ACTIV / PLANIFICAT / ARHIVAT.
+========================================================== */
+
+function ensureEventsSheet(ss) {
+  var sheet = ss.getSheetByName("Evenimente");
+  if (!sheet) {
+    sheet = ss.insertSheet("Evenimente");
+    sheet.getRange(1, 1, 1, 14).setValues([[
+      "ID", "Nume", "Congregație", "Data", "Ora", "Locație", "Status",
+      "ActivDin", "ActivPana", "ConfigJSON", "Version", "CreatedAt", "UpdatedAt", "UpdatedBy"
+    ]]);
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+function eventEffectiveStatus(status, activeFrom, activeUntil) {
+  var raw = String(status || "PLANIFICAT").toUpperCase();
+  if (raw === "ARHIVAT") return "ARHIVAT";
+
+  var now = new Date();
+  var from = activeFrom ? new Date(activeFrom) : null;
+  var until = activeUntil ? new Date(activeUntil) : null;
+
+  if (until && !isNaN(until.getTime()) && now > until) return "ARHIVAT";
+  if (from && !isNaN(from.getTime()) && now < from) return "PLANIFICAT";
+  if (raw === "ACTIV") return "ACTIV";
+  if (raw === "PLANIFICAT" && from && !isNaN(from.getTime()) && now >= from) return "ACTIV";
+  return raw === "ACTIV" ? "ACTIV" : "PLANIFICAT";
+}
+
+function eventRecordFromRow(row) {
+  var config = {};
+  try { config = row[9] ? JSON.parse(String(row[9])) : {}; } catch (e) { config = {}; }
+  var activeFrom = row[7] ? new Date(row[7]) : null;
+  var activeUntil = row[8] ? new Date(row[8]) : null;
+  return {
+    id: String(row[0] || ""),
+    name: String(row[1] || ""),
+    congregation: String(row[2] || ""),
+    date: row[3] ? Utilities.formatDate(new Date(row[3]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "",
+    time: String(row[4] || ""),
+    location: String(row[5] || ""),
+    status: eventEffectiveStatus(row[6], activeFrom, activeUntil),
+    storedStatus: String(row[6] || "PLANIFICAT").toUpperCase(),
+    activeFrom: activeFrom && !isNaN(activeFrom.getTime()) ? activeFrom.toISOString() : "",
+    activeUntil: activeUntil && !isNaN(activeUntil.getTime()) ? activeUntil.toISOString() : "",
+    version: Number(row[10] || 1),
+    createdAt: row[11] ? new Date(row[11]).toISOString() : "",
+    updatedAt: row[12] ? new Date(row[12]).toISOString() : "",
+    updatedBy: String(row[13] || ""),
+    config: config
+  };
+}
+
+function migrateLegacyConfigToEvents(ss) {
+  var events = ensureEventsSheet(ss);
+  if (events.getLastRow() >= 2) return;
+
+  var legacy = getCentralConfigRecord(ss);
+  if (!legacy || !legacy.config) return;
+
+  var config = legacy.config;
+  var event = config.event || {};
+  var start = event.date && event.time ? new Date(event.date + "T" + event.time + ":00") : new Date();
+  var until = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+  var id = "EVT-001";
+  var now = new Date();
+
+  events.getRange(2, 1, 1, 14).setValues([[
+    id,
+    event.name || "Eveniment",
+    event.congregation || "",
+    event.date || "",
+    event.time || "",
+    event.location || "",
+    "ACTIV",
+    start,
+    until,
+    JSON.stringify(config),
+    Number(legacy.version || 1),
+    now,
+    now,
+    legacy.updatedBy || ""
+  ]]);
+}
+
+function getEventRows(ss) {
+  migrateLegacyConfigToEvents(ss);
+  var sheet = ensureEventsSheet(ss);
+  if (sheet.getLastRow() < 2) return [];
+  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, 14).getValues();
+  return values.filter(function(row) { return String(row[0] || "").trim() !== ""; }).map(eventRecordFromRow);
+}
+
+function getEventsResponse(ss) {
+  var events = getEventRows(ss);
+  return jsonOutput({ success: true, events: events.map(function(e) {
+    return {
+      id:e.id, name:e.name, congregation:e.congregation, date:e.date, time:e.time,
+      location:e.location, status:e.status, storedStatus:e.storedStatus,
+      activeFrom:e.activeFrom, activeUntil:e.activeUntil, version:e.version,
+      updatedAt:e.updatedAt, updatedBy:e.updatedBy
+    };
+  }) });
+}
+
+function findEventRow(ss, eventId) {
+  var sheet = ensureEventsSheet(ss);
+  if (sheet.getLastRow() < 2) return null;
+  var values = sheet.getRange(2, 1, sheet.getLastRow() - 1, 14).getValues();
+  for (var i = 0; i < values.length; i++) {
+    if (String(values[i][0] || "").trim() === String(eventId || "").trim()) {
+      return { sheet: sheet, rowNumber: i + 2, row: values[i] };
+    }
+  }
+  return null;
+}
+
+function getEventResponse(ss, eventId) {
+  var found = findEventRow(ss, eventId);
+  if (!found) return jsonOutput({ success:false, message:"Evenimentul nu a fost găsit." });
+  var event = eventRecordFromRow(found.row);
+  return jsonOutput({ success:true, event:event });
+}
+
+function getActiveEventResponse(ss) {
+  var events = getEventRows(ss);
+  var active = events.filter(function(e) { return e.status === "ACTIV"; });
+  active.sort(function(a,b) { return String(a.activeFrom || "").localeCompare(String(b.activeFrom || "")); });
+  if (!active.length) return jsonOutput({ success:true, configured:false, event:null });
+  return jsonOutput({ success:true, configured:true, event:active[active.length - 1] });
+}
+
+function parseEventDateTime(value, fallback) {
+  var text = String(value || "").trim();
+  if (!text) return fallback || new Date();
+  var d = new Date(text);
+  return isNaN(d.getTime()) ? (fallback || new Date()) : d;
+}
+
+function authorizeEventAdmin(ss, data) {
+  var userId = cleanValue(getValue(data, ["updatedBy", "userId"]));
+  if (!isActiveAdmin(ss, userId)) throw new Error("Utilizatorul nu este autorizat pentru administrarea evenimentelor.");
+  return userId;
+}
+
+function createEvent(ss, data) {
+  try {
+    var userId = authorizeEventAdmin(ss, data);
+    var sheet = ensureEventsSheet(ss);
+    var events = getEventRows(ss);
+    var number = events.reduce(function(max, e) {
+      var m = e.id.match(/^EVT-(\\d+)$/); return m ? Math.max(max, Number(m[1])) : max;
+    }, 0) + 1;
+    var id = "EVT-" + String(number).padStart(3, "0");
+    var source = null;
+    if (data.sourceEventId) {
+      var sourceRow = findEventRow(ss, data.sourceEventId);
+      if (sourceRow) source = eventRecordFromRow(sourceRow.row);
+    }
+    if (!source && events.length) source = events[events.length - 1];
+    if (!source) {
+      var legacy = getCentralConfigRecord(ss);
+      if (legacy) source = { config: legacy.config };
+    }
+    var config = source && source.config ? JSON.parse(JSON.stringify(source.config)) : {};
+    var name = cleanValue(getValue(data, ["name"])) || "Eveniment nou";
+    var congregation = cleanValue(getValue(data, ["congregation"])) || (config.event && config.event.congregation) || "";
+    var date = cleanValue(getValue(data, ["date"])) || (config.event && config.event.date) || "";
+    var time = cleanValue(getValue(data, ["time"])) || (config.event && config.event.time) || "00:00";
+    var location = cleanValue(getValue(data, ["location"])) || (config.event && config.event.location) || "";
+    var activeFrom = parseEventDateTime(getValue(data, ["activeFrom"]), new Date());
+    var activeUntil = parseEventDateTime(getValue(data, ["activeUntil"]), new Date(activeFrom.getTime() + 7*24*60*60*1000));
+    config.event = config.event || {};
+    config.event.name = name; config.event.congregation = congregation; config.event.date = date; config.event.time = time; config.event.location = location;
+    config.event.eventId = id;
+    var now = new Date();
+    sheet.appendRow([id,name,congregation,date,time,location,"PLANIFICAT",activeFrom,activeUntil,JSON.stringify(config),1,now,now,userId]);
+    return jsonOutput({success:true,event:eventRecordFromRow(sheet.getRange(sheet.getLastRow(),1,1,14).getValues()[0])});
+  } catch (error) { return jsonOutput({success:false,message:error.toString()}); }
+}
+
+function saveEvent(ss, data) {
+  try {
+    var userId = authorizeEventAdmin(ss, data);
+    var eventId = cleanValue(getValue(data, ["eventId"]));
+    var found = findEventRow(ss, eventId);
+    if (!found) throw new Error("Evenimentul nu a fost găsit.");
+    var raw = getValue(data, ["config"]);
+    if (!raw) throw new Error("Configurația lipsește.");
+    var config = typeof raw === "string" ? JSON.parse(raw) : raw;
+    var old = eventRecordFromRow(found.row);
+    var name = cleanValue(getValue(data,["name"])) || old.name;
+    var congregation = cleanValue(getValue(data,["congregation"])) || old.congregation;
+    var date = cleanValue(getValue(data,["date"])) || old.date;
+    var time = cleanValue(getValue(data,["time"])) || old.time;
+    var location = cleanValue(getValue(data,["location"])) || old.location;
+    var status = String(getValue(data,["status"]) || old.storedStatus || "PLANIFICAT").toUpperCase();
+    if (["ACTIV","PLANIFICAT","ARHIVAT"].indexOf(status) === -1) status = "PLANIFICAT";
+    var activeFrom = parseEventDateTime(getValue(data,["activeFrom"]), old.activeFrom ? new Date(old.activeFrom) : new Date());
+    var activeUntil = parseEventDateTime(getValue(data,["activeUntil"]), old.activeUntil ? new Date(old.activeUntil) : new Date(activeFrom.getTime()+7*24*60*60*1000));
+    config.event = config.event || {};
+    config.event.eventId = eventId; config.event.name=name; config.event.congregation=congregation; config.event.date=date; config.event.time=time; config.event.location=location;
+    var version = Number(old.version || 0) + 1; var now = new Date();
+    found.sheet.getRange(found.rowNumber,1,1,14).setValues([[eventId,name,congregation,date,time,location,status,activeFrom,activeUntil,JSON.stringify(config),version,found.row[11]||now,now,userId]]);
+    SpreadsheetApp.flush();
+    return jsonOutput({success:true,event:eventRecordFromRow(found.sheet.getRange(found.rowNumber,1,1,14).getValues()[0])});
+  } catch (error) { return jsonOutput({success:false,message:error.toString()}); }
+}
+
+function activateEvent(ss, data) {
+  try {
+    var userId = authorizeEventAdmin(ss, data);
+    var eventId = cleanValue(getValue(data,["eventId"]));
+    var sheet = ensureEventsSheet(ss);
+    var events = getEventRows(ss);
+    var found = findEventRow(ss,eventId);
+    if (!found) throw new Error("Evenimentul nu a fost găsit.");
+    events.forEach(function(e) {
+      var row = findEventRow(ss,e.id);
+      if (!row) return;
+      var current = row.row;
+      if (e.id === eventId) {
+        current[6] = "ACTIV";
+      } else if (String(current[6] || "").toUpperCase() === "ACTIV") {
+        current[6] = "ARHIVAT";
+      }
+      current[12] = new Date(); current[13] = userId;
+      row.sheet.getRange(row.rowNumber,1,1,14).setValues([current]);
+    });
+    SpreadsheetApp.flush();
+    return getEventResponse(ss,eventId);
+  } catch (error) { return jsonOutput({success:false,message:error.toString()}); }
+}
+
+function archiveEvent(ss, data) {
+  try {
+    var userId = authorizeEventAdmin(ss, data);
+    var eventId = cleanValue(getValue(data,["eventId"]));
+    var found = findEventRow(ss,eventId);
+    if (!found) throw new Error("Evenimentul nu a fost găsit.");
+    found.row[6] = "ARHIVAT"; found.row[12] = new Date(); found.row[13] = userId;
+    found.sheet.getRange(found.rowNumber,1,1,14).setValues([found.row]);
+    return getEventResponse(ss,eventId);
+  } catch (error) { return jsonOutput({success:false,message:error.toString()}); }
+}
 
 
 /* ==========================================================
