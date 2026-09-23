@@ -84,6 +84,36 @@
   const renderers={hero:renderHero,countdown:renderCountdown,memories:renderMemories,features:renderFeatures,gallery:renderGallery,participation:renderParticipation,stats:renderStats,food:renderFood,location:renderLocation};
   app.innerHTML=renderHero()+enabledModules.map(m=>renderers[m.id]?renderers[m.id]() : "").join("");
 
+  // Imaginea Hero este configurabilă din Admin. Dacă valoarea salvată
+  // nu mai există, folosim imaginea Hero inclusă în proiect.
+  const heroEl=document.getElementById("home");
+  const configuredHeroImage=String(cfg.event.heroImage||"").trim();
+  const fallbackHeroImage="./assets/images/image.png";
+  if(heroEl){
+    const applyHeroImage=(src)=>{
+      const safe=String(src||"").replace(/"/g,"%22");
+      heroEl.style.backgroundImage=safe
+        ? `linear-gradient(rgba(20,20,20,.45),rgba(20,20,20,.45)),url("${safe}")`
+        : "";
+      heroEl.style.backgroundPosition="center";
+      heroEl.style.backgroundSize="cover";
+      heroEl.style.backgroundRepeat="no-repeat";
+    };
+    if(configuredHeroImage){
+      const probe=new Image();
+      probe.onload=()=>applyHeroImage(configuredHeroImage);
+      probe.onerror=()=>{
+        const fallback=new Image();
+        fallback.onload=()=>applyHeroImage(fallbackHeroImage);
+        fallback.onerror=()=>applyHeroImage("");
+        fallback.src=new URL(fallbackHeroImage,document.baseURI).href;
+      };
+      probe.src=new URL(configuredHeroImage,document.baseURI).href;
+    }else{
+      applyHeroImage(fallbackHeroImage);
+    }
+  }
+
   const navItems=[{id:"home",label:"Acasă"}].concat(enabledModules.filter(m=>m.showInMenu!==false && !["hero","countdown","participation"].includes(m.id)).map(m=>({id:m.id==="features"?"event":m.id,label:m.label})));
   nav.innerHTML=navItems.map(x=>`<li><a href="#${x.id}">${esc(x.label)}</a></li>`).join("");
   document.title=`${cfg.event.name} • ${cfg.event.congregation}`;
