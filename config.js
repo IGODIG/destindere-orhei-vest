@@ -13,7 +13,7 @@ const DEFAULT_CONFIG = {
     heroTitle: "DESTINDERE",
     heroSubtitle: "Iată ce bine și ce plăcut este ca frații să locuiască împreună în unitate!",
     heroVerse: "Iată ce bine și ce plăcut este ca frații să locuiască împreună în unitate!",
-    heroImage: "./assets/images/hero/hero.jpg",
+    heroImage: "./assets/images/image.png",
     footer: "© 2026 Destindere de Toamnă • Congregația Orhei-Vest"
   },
 
